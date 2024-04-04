@@ -30,6 +30,21 @@ class ArticleSchema(ma.Schema):
 article_schema = ArticleSchema()
 articles_schema = ArticleSchema(many=True)
 
+class Feedbacks(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    comment = db.Column(db.Text())
+    date = db.Column(db.DateTime, default = datetime.datetime.now)
+
+    def __init__(self, comment):
+        self.comment = comment
+
+class FeedbackSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'comment', 'date')
+
+feedback_schema = FeedbackSchema()
+feedbacks_schema = FeedbackSchema(many=True)
+
 @app.route('/community-page/get', methods = ['GET'])
 def get_articles():
     all_articles = Articles.query.all()
@@ -71,6 +86,15 @@ def article_delete(id):
     db.session.commit()
 
     return article_schema.jsonify(article)
+
+@app.route('/matching-page/add', methods = ['POST'])
+def submit_feedback():
+    comment = request.json['comment']
+
+    feedbacks = Feedbacks(comment)
+    db.session.add(feedbacks)
+    db.session.commit()
+    return feedback_schema.jsonify(feedbacks)
 
 if __name__ == "main":
     app.run(debug=True)

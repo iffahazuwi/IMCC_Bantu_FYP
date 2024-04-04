@@ -1,3 +1,3 @@
 export default function FeedbackForm() {
-    <h1>Mentor Application Form Test</h1>
+    <h1>Notification Center Test</h1>
 }

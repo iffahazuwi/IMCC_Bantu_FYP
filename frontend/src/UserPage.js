@@ -1,4 +1,5 @@
 import './App.css';
+import { Link, useMatch, useResolvedPath } from "react-router-dom"
 
 export default function UserPage() {
     return (
@@ -8,10 +9,12 @@ export default function UserPage() {
             </div>
             <div className='col'>
                 <div className="mb-4" align='right'>
-                    <button
-                        className='btn btn-primary'
-                    // onClick={openForm}
-                    >Notification</button>
+                    <Link to="/user-page/notifications">
+                        <button
+                            className='btn btn-primary'
+                            // onClick={openForm}
+                        >Notification</button>
+                    </Link>   
                 </div>
                 <div className='mb-4' align='center'>
                     <img className='border mb-4' src="./user-128.png" alt="" width={120} height={120} />
@@ -24,10 +27,12 @@ export default function UserPage() {
                 </div>
                 <hr />
                 <div className="mb-2" align='center'>
-                    <button
-                        className='btn btn-success'
-                    // onClick={openForm}
-                    >Mentor Application Form</button>
+                    <Link to="/user-page/application-form">
+                        <button
+                            className='btn btn-success'
+                            // onClick={openForm}
+                        >Mentor Application Form</button>
+                    </Link>
                 </div>
             </div>
         </div>
