@@ -13,7 +13,6 @@ body {
 
 .container {
     margin: 1rem;
-    text-align: center;
 }
 
 .nav {
@@ -28,6 +27,7 @@ body {
 
 .site-title {
     font-size: 2rem;
+    gap: .5rem;
 }
 
 .nav ul {

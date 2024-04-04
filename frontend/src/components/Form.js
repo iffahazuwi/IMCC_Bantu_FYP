@@ -35,7 +35,7 @@ function Form(props) {
                         onChange={(e) => setTitle(e.target.value)}
                     />
 
-                    <label htmlFor="body" className="form-label">Description</label>
+                    <label htmlFor="body" className="form-label mt-2">Description</label>
                     <textarea
                         rows="5"
                         value={body}
@@ -43,16 +43,20 @@ function Form(props) {
                         placeholder="Please Enter Description"
                         onChange={(e) => setBody(e.target.value)}
                     />
-                    {
-                        props.article.id ? <button
-                            className="btn btn-success mt-3"
-                            onClick={updateArticle}
-                        >Update</button> :
-                            <button
+                    <div align='center'>
+                        {
+                        
+                            props.article.id ? <button
                                 className="btn btn-success mt-3"
-                                onClick={insertArticle}
-                            >Insert</button>
-                    }
+                                onClick={updateArticle}
+                            >Update</button> :
+                                <button
+                                    className="btn btn-success mt-3"
+                                    onClick={insertArticle}
+                                >Insert</button>
+                        
+                        }
+                    </div>
                 </div>
             ) : null}
 
