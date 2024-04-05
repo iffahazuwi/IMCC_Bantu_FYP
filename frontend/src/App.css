@@ -2,8 +2,77 @@
     background-color: white;
     min-height: 100vh;
     color: black;
+    padding-right: 3rem;
+    padding-left: 3rem;
+    margin-top: 1rem;
 }
 
+/* .App {
+  background-color: rgb(254, 218, 232);
+  color: rgb(254, 218, 232);
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+} */
+
+.login-form, .register-form {
+  color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2rem;
+  /* border-style: dashed; */
+  border-style: double;
+  /* text-align: center; */
+  /* background-color: rgb(105, 105, 105); */
+}
+
+.auth-form-container {
+  /* margin: 0 20rem;
+  padding: 5rem; */
+  border: 1px;
+  padding-right: 20rem;
+  padding-left: 20rem;
+  /* align-items: center; */
+  /* text-align: center; */
+  /* border-radius: 10px;  */
+  justify-content: center;
+  /* background-color: blueviolet; */
+}
+
+.label {
+    font-size: 10px;
+    text-align: left;
+    padding: 0.5rem 0;
+    margin-bottom: 2rem;
+}
+
+input {
+  margin: 0.5rem 0;
+}
+
+button {
+  background-color: #f68b1e;
+  color: white;
+  align-items: center;
+  text-align: center;
+  width: fit-content;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  padding: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.link-btn {
+    align-items: center;
+    color: blue;
+    background: none;
+}
+/* 
 input[type=text], select {
     width: 100%;
     padding: 12px 20px;
@@ -27,4 +96,4 @@ input[type=submit] {
   
 input[type=submit]:hover {
     background-color: #45a049;
-}
+} */

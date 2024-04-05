@@ -62,7 +62,7 @@ export default function CommunityPage(){
             <div className='row'>
                 <div className='col' align='right'>
                     <button
-                        className='btn btn-success'
+                        className='btn btn-primary'
                         onClick={openForm}
                     >Create Post</button>
                 </div>
