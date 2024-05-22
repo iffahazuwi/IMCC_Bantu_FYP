@@ -27,7 +27,7 @@ function Form(props) {
             {props.article ? (
                 <div className="mb-3">
 
-                    <label htmlFor="title" className="form-label">Title</label>
+                    <label htmlFor="title" className="form-label mt-2">Title</label>
                     <input type="text"
                         value={title}
                         className="form-control"

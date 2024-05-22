@@ -14,7 +14,6 @@ const Login = (props) => {
         try {
             await axios.post("http://localhost:5000/login",
                 { email, password });
-            alert("Logged in.")
 
             navigate("/home");
         } catch (err) {
@@ -30,7 +29,7 @@ const Login = (props) => {
             <div className="p-3">
                 <form className="login-form" onSubmit={handleSubmit}>
             
-                    <label className="mb-1" htmlFor="email">USM Student Email</label>
+                    <label className="mb-1" htmlFor="email">USM Email</label>
                     <input  className="mb-2" value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Please enter your student email..." id="email" name="email" />
             
                     <label className="mb-1" htmlFor="password">Password</label>

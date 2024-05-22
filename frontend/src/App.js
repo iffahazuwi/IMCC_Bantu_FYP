@@ -1,16 +1,18 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import './App.css';
-import LoginPage from './LoginPage';
-import RegisterPage from './RegisterPage';
-import Navigation from './Navigation';
-import Home from './Home';
-import MatchingPage from './MatchingPage';
 import CommunityPage from './CommunityPage';
-import UserPage from './UserPage'
-import FeedbackForm from './components/FeedbackForm';
-import ApplicationForm from './components/ApplicationForm'
-import Notifications from './components/Notifications'
-import LoginHeader from './LoginHeader';
-import {BrowserRouter, Route, Routes} from "react-router-dom"
+import FeedbackForm from "./FeedbackForm";
+import Home from './Home';
+import LoginPage from './LoginPage';
+import MatchingPage from './MatchingPage';
+import Navigation from './Navigation';
+import RegisterPage from './RegisterPage';
+import UserPage from './UserPage';
+import ApplicationForm from './ApplicationForm';
+import Notifications from './Notifications';
+import MyBookmarks from "./Bookmarks";
+import CreatePost from "./CreatePost";
+import ApplicationList from "./ApplicationList";
 
 
 const App = () => {
@@ -18,7 +20,7 @@ const App = () => {
     return (
         <>
             <BrowserRouter>
-                <Navigation/>
+                <Navigation />
                 <Routes>
                     <Route path="/" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
@@ -28,7 +30,10 @@ const App = () => {
                     <Route path="/user-page" element={<UserPage />} />
                     <Route path="/matching-page/feedback-form" element={<FeedbackForm />} />
                     <Route path="/user-page/application-form" element={<ApplicationForm />} />
+                    <Route path="/user-page/application-list" element={<ApplicationList />} />
                     <Route path="/user-page/notifications" element={<Notifications />} />
+                    <Route path="/community-page/bookmarks" element={<MyBookmarks />} />
+                    <Route path="/community-page/create-post" element={<CreatePost />} />
                 </Routes>
             </BrowserRouter>
             {/* <Navigation />
