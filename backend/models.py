@@ -24,9 +24,6 @@ class User(db.Model, UserMixin):
         self.password = password
         self.phone_no = phone_no
 
-    # def check_password(self, password):
-    #     return self.password = password
-
     notifications = db.relationship('Notification', back_populates='user')
 
 class Student(User):
@@ -70,9 +67,10 @@ class Application(db.Model):
     app_filename = db.Column(db.String(345), nullable=False)
     app_filedata = db.Column(db.String(345), nullable=False)
     app_date = db.Column(db.DateTime, default=datetime.now)
+    app_status = db.Column(db.String(345), nullable=True)
     id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-    user = db.relationship('User', backref=db.backref('applications', lazy=True))
+    user = db.relationship('Student', backref=db.backref('applications', lazy=True))
 
 class Post(db.Model):
     __tablename__ = "posts"
@@ -98,7 +96,17 @@ class Bookmark(db.Model):
     __tablename__ = "bookmarks"
     bookmark_id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
     id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    post_id = db.Column(db.String(32), db.ForeignKey('posts.post_id'), nullable=False)
+    post_id = db.Column(db.String(32), db.ForeignKey('posts.post_id', ondelete='CASCADE'), nullable=False)
 
-    post = db.relationship('Post', backref=db.backref('bookmarked_by', lazy=True))
+    post = db.relationship('Post', backref=db.backref('bookmarked_by', lazy=True, cascade='all, delete'))
     user = db.relationship('User', backref=db.backref('bookmarks', lazy=True))
+
+class Matching(db.Model):
+    __tablename__ = "matchings"
+    matching_id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
+    client_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    mentor_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    matching_date = db.Column(db.DateTime, default=datetime.now)
+
+    client = db.relationship('User', foreign_keys=[client_id])
+    mentor = db.relationship('User', foreign_keys=[mentor_id])

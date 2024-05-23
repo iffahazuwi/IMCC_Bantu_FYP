@@ -13,6 +13,7 @@ import Notifications from './Notifications';
 import MyBookmarks from "./Bookmarks";
 import CreatePost from "./CreatePost";
 import ApplicationList from "./ApplicationList";
+import CreateMatch from "./CreateMatch";
 
 
 const App = () => {
@@ -34,6 +35,7 @@ const App = () => {
                     <Route path="/user-page/notifications" element={<Notifications />} />
                     <Route path="/community-page/bookmarks" element={<MyBookmarks />} />
                     <Route path="/community-page/create-post" element={<CreatePost />} />
+                    <Route path="/matching-page/create-match" element={<CreateMatch />} />
                 </Routes>
             </BrowserRouter>
             {/* <Navigation />

@@ -19,7 +19,7 @@ const CreatePost = (props) => {
             navigate("/community-page");
         } catch (err) {
             if (err.response && err.response.status === 401) {
-                alert('Detais you entered are invalid! Please try again.');
+                alert('Details you entered are invalid! Please try again.');
             }
         }
     }
