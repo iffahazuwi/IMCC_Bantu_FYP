@@ -38,20 +38,6 @@ const App = () => {
                     <Route path="/matching-page/create-match" element={<CreateMatch />} />
                 </Routes>
             </BrowserRouter>
-            {/* <Navigation />
-            <div className='container'>
-                <Routes>
-                    <Route path="/" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
-                    <Route path="/home" element={<Home />} />
-                    <Route path="/matching-page" element={<MatchingPage />} />
-                    <Route path="/community-page" element={<CommunityPage />} />
-                    <Route path="/user-page" element={<UserPage />} />
-                    <Route path="/matching-page/feedback-form" element={<FeedbackForm />} />
-                    <Route path="/user-page/application-form" element={<ApplicationForm />} />
-                    <Route path="/user-page/notifications" element={<Notifications />} />
-                </Routes>
-            </div> */}
         </>
     )
 }

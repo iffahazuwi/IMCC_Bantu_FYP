@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, abort, redirect, send_from_directory
+from flask import Flask, jsonify, request, abort, redirect, send_from_directory, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
@@ -23,6 +23,8 @@ bcrypt = Bcrypt(app)
 CORS(app, origins="http://localhost:3000", supports_credentials=True)
 server_session = Session(app)
 db.init_app(app)
+
+bp = Blueprint('api', __name__)
 
 with app.app_context():
     db.create_all()
@@ -380,6 +382,32 @@ def get_matches():
                      "matching_date": match.matching_date.strftime('%Y-%m-%d %H:%M:%S')} for match in matches]
     return jsonify(matches_list)
 
+@app.route('/get_match_details/<matching_id>', methods=['GET'])
+@login_required
+def get_match_details(matching_id):
+    match = Matching.query.get(matching_id)
+    if not match:
+        return jsonify({'error': 'Match not found'}), 404
+    
+    client = Student.query.get(match.client_id)
+    mentor = Student.query.get(match.mentor_id)
+
+    if not client or not mentor:
+        return jsonify({'error': 'Client or Mentor not found'}), 404
+
+    match_details = {
+        'client_name': client.name,
+        'client_school': client.school,
+        'client_phone_no': client.phone_no,
+        'client_email': client.email,
+        'mentor_name': mentor.name,
+        'mentor_school': mentor.school,
+        'mentor_phone_no': mentor.phone_no,
+        'mentor_email': mentor.email,
+        'is_mentor': current_user.id == mentor.id
+    }
+    return jsonify(match_details)
+
 @app.route('/delete-match/<matching_id>', methods=['DELETE'])
 def delete_match(matching_id):
     match = Matching.query.get(matching_id)
@@ -441,6 +469,21 @@ def get_user_role():
 def logout():
     logout_user()  # This is the function from flask_login
     return jsonify({"message": "Logged out successfully!"}), 200
+
+@app.route('/get_student_matching_id', methods=["GET"])
+@login_required
+def get_student_matching_id():
+    user = current_user
+    user_type = user.discriminator
+    if user_type == "student":
+        if user.is_mentor == False:
+            matching = Matching.query.filter_by(client_id=current_user.id).first()
+            matching_id = matching.matching_id
+            return jsonify({"matching_id": matching_id}), 200
+        if user.is_mentor == True:
+            matching = Matching.query.filter_by(mentor_id=current_user.id).first()
+            matching_id = matching.matching_id
+            return jsonify({"matching_id": matching_id}), 200
 
 if __name__ == "__main__":
     # db.create_all()

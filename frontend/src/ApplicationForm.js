@@ -57,6 +57,16 @@ const ApplicationForm = (props) => {
                         placeholder="Please enter your gender..."
                         onChange={(e) => setGender(e.target.value)}
                     />
+                    {/* <select
+                    className="form-select"
+                    value={app_gender}
+                    onChange={(e) => setGender(e.target.value)}
+                >
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select> */}
                 
                 <label htmlFor="app_country" className="form-label mt-3">Origin Country</label>
                     <input type="text"
