@@ -5,15 +5,17 @@ import axios from './axios';
 
 export default function CommunityPage() {
 
-    const [posts, setPosts] = useState([])
+    const [posts, setPosts] = useState([]);
     const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
     const [userType, setUserType] = useState('');
+    const [isMentor, setIsMentor] = useState(false);
 
     useEffect(() => {
         const fetchUserRole = async () => {
             try{
                 const response = await axios.get('http://localhost:5000/getUserRole', {withCredentials: true});
                 setUserType(response.data.type);
+                setIsMentor(response.data.is_mentor);
             } catch (error){
                 console.error('Error fetching user role:', error);
             }
@@ -40,7 +42,23 @@ export default function CommunityPage() {
         fetchUserRole();
         fetchPosts();
         fetchBookmarks();
-    }, []);    
+    }, []);
+
+    if (userType === 'student' && !isMentor) {
+        return (
+            <div className="App">
+                <div className='col mb-6' align='center'>
+                    <h1>Community Page</h1>
+                </div>
+                <div className='pt-4'>
+                    <h4>
+                        Sorry, you have no access to this content.
+                        <br/>Only mentors can have full access to this page.
+                    </h4>
+                </div>
+            </div>
+        );
+    }
 
     const deletePost = async (postId) => {
         try {

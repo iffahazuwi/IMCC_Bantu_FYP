@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import axios from './axios';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, Form } from 'react-bootstrap';
 
 export default function MatchingPage() {
 
@@ -12,77 +12,15 @@ export default function MatchingPage() {
     const [modalTitle, setModalTitle] = useState('');
     const [matchDetails, setMatchDetails] = useState(null);
     const [matchingId, setMatchingId] = useState('');
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [selectedMatch, setSelectedMatch] = useState({});
+    const [newEvaluation, setNewEvaluation] = useState('');
 
-    // Fetch student matching ID
-    // useEffect(() => {
-    //     const getStudentMatchingId = async () => {
-    //         try {
-    //             const response = await axios.get('http://localhost:5000/get_student_matching_id', { withCredentials: true });
-    //             console.log('Response:', response); // Log the entire response object
-    //             if (response.data && response.data.matching_id) {
-    //                 setMatchingId(response.data.matching_id);
-    //             } else {
-    //                 console.error('No matching_id found in the response:', response);
-    //             }
-    //         } catch (error) {
-    //             console.error('Error fetching student matching ID:', error);
-    //         }
-    //     };
-    
-    //     getStudentMatchingId();
-    // }, []);
-    
-
-    // // Define fetchMatches function
-    // const fetchMatches = async () => {
-    //     try {
-    //         const response = await axios.get('http://localhost:5000/getMatches', { withCredentials: true });
-    //         setMatches(response.data);
-    //     } catch (error) {
-    //         console.error('Error fetching matches:', error);
-    //     }
-    // };
-
-    // // Define viewMatchDetails function
-    // const viewMatchDetails = async (matchingId) => {
-    //     try {
-    //         const response = await axios.get(`http://localhost:5000/get_match_details/${matchingId}`, { withCredentials: true });
-    //         setMatchDetails(response.data);
-    //     } catch (error) {
-    //         console.error('Error fetching match details:', error);
-    //     }
-    // };    
-
-    // useEffect(() => {
-    //     const fetchUserRole = async () => {
-    //         try {
-    //             const response = await axios.get('http://localhost:5000/getUserRole', { withCredentials: true });
-    //             setUserType(response.data.type);
-    //         } catch (error) {
-    //             console.error('Error fetching user role:', error);
-    //         }
-    //     };
-
-    //     fetchUserRole();
-    //     fetchMatches();
-    //     viewMatchDetails();
-    // }, []);
-
-    // useEffect(() => {
-    //     if (userType === 'student' && matches.length > 0) {
-    //         viewMatchDetails(matches[0].matching_id);
-    //     }
-    // }, [userType, matches]);
-
-    // useEffect(() => {
-    //     if (userType === 'student' && matchingId !== '' && matches.length > 0) {
-    //         viewMatchDetails(matchingId);
-    //     }
-    // }, [userType, matches, matchingId]);
-
-    
     useEffect(() => {
-        const fetchData = async () => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
             try {
                 const userTypeResponse = await axios.get('http://localhost:5000/getUserRole', { withCredentials: true });
                 setUserType(userTypeResponse.data.type);
@@ -90,9 +28,11 @@ export default function MatchingPage() {
                 if (userTypeResponse.data.type === 'student') {
                     const matchingIdResponse = await axios.get('http://localhost:5000/get_student_matching_id', { withCredentials: true });
                     setMatchingId(matchingIdResponse.data.matching_id);
-    
-                    const matchDetailsResponse = await axios.get(`http://localhost:5000/get_match_details/${matchingIdResponse.data.matching_id}`, { withCredentials: true });
-                    setMatchDetails(matchDetailsResponse.data);
+
+                    if (matchingIdResponse.data.matching_id){
+                        const matchDetailsResponse = await axios.get(`http://localhost:5000/get_match_details/${matchingIdResponse.data.matching_id}`, { withCredentials: true });
+                        setMatchDetails(matchDetailsResponse.data);
+                    }
                 }
     
                 if (userTypeResponse.data.type === 'admin') {
@@ -103,10 +43,6 @@ export default function MatchingPage() {
                 console.error('Error fetching data:', error);
             }
         };
-    
-        fetchData();
-    }, []);
-    
     const handleClose = () => setShowModal(false);
 
     const viewFile = async (matchingId) => {
@@ -135,93 +71,132 @@ export default function MatchingPage() {
         }
     };
 
+    const handleEditClose = () => setShowEditModal(false);
+
+    const handleEvaluationChange = (event) => {
+        setNewEvaluation(event.target.value);
+    };
+
+    const saveEvaluation = async () => {
+        try {
+            await axios.post('http://localhost:5000/update-evaluation', {
+                matching_id: selectedMatch.matching_id,
+                evaluation: newEvaluation
+            }, { withCredentials: true });
+            alert("Evaluation updated successfully!")
+            fetchData(); // Refresh the list
+            handleEditClose();
+        } catch (error) {
+            console.error("Error updating evaluation:", error);
+        }
+    };
+
+    const editEvaluation = (match) => {
+        setSelectedMatch(match);
+        setNewEvaluation(match.evaluation || '');
+        setShowEditModal(true);
+    };
+
     return (
         <div className="App">
             <div className='col mb-3' align='center'>
                 <h1>Matching Page</h1>
             </div>
-            {userType === 'student' ? (<div>
-            {matchDetails && (
-            <div>
-                <h4 className='mb-3'><strong>Current Status: </strong></h4>
-                <hr />
-                <h5 className="mb-3">Matching process has completed!<br />
-                    Details of your resulted partner are provided below:</h5>
-            {matchDetails.is_mentor ? (  // Added conditional rendering
-                <><div className="border border-dark rounded p-3">
-                    <h4>
-                        <div className='row'>
-                            <div className='col-md-3'><strong>Client Name</strong></div>
-                            <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{matchDetails.client_name}</span></div>
+            {userType === 'student' ? (
+                <div>
+                    {matchingId ? (  // Highlighted: Conditional rendering based on matchingId
+                        matchDetails && (
+                            <div>
+                                <h4 className='mb-3'><strong>Current Status: </strong>In Progress</h4>
+                                <hr />
+                                <h5 className="mb-3">Matching process has completed!<br />
+                                    Details of your resulted partner are provided below:</h5>
+                                {matchDetails.is_mentor ? (
+                                    <><div className="border border-dark rounded p-3">
+                                        <h4>
+                                            <div className='row'>
+                                                <div className='col-md-3'><strong>Client Name</strong></div>
+                                                <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{matchDetails.client_name}</span></div>
+                                            </div>
+                                        </h4>
+                                        <h4>
+                                            <div className='row'>
+                                                <div className='col-md-3'><strong>Client School</strong></div>
+                                                <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{matchDetails.client_school}</span></div>
+                                            </div>
+                                        </h4>
+                                        <h4>
+                                            <div className='row'>
+                                                <div className='col-md-3'><strong>Client Phone No.</strong></div>
+                                                <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{matchDetails.client_phone_no}</span></div>
+                                            </div>
+                                        </h4>
+                                        <h4>
+                                            <div className='row'>
+                                                <div className='col-md-3'><strong>Client Email Address</strong></div>
+                                                <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{matchDetails.client_email}</span></div>
+                                            </div>
+                                        </h4>
+                                    </div><hr/>
+                                    <div className='mt-2' align='center'>
+                                        <Link to="/matching-page/mentor-feedback">
+                                            <button className='btn btn-primary'>View Matching History</button>
+                                        </Link>
+                                    </div>
+                                    </>
+                                ) : (
+                                    <><div className="border border-dark rounded p-3">
+                                        <h4>
+                                            <div className='row'>
+                                                <div className='col-md-3'><strong>Mentor Name</strong></div>
+                                                <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{matchDetails.mentor_name}</span></div>
+                                            </div>
+                                        </h4>
+                                        <h4>
+                                            <div className='row'>
+                                                <div className='col-md-3'><strong>Mentor School</strong></div>
+                                                <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{matchDetails.mentor_school}</span></div>
+                                            </div>
+                                        </h4>
+                                        <h4>
+                                            <div className='row'>
+                                                <div className='col-md-3'><strong>Mentor Phone No.</strong></div>
+                                                <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{matchDetails.mentor_phone_no}</span></div>
+                                            </div>
+                                        </h4>
+                                        <h4>
+                                            <div className='row'>
+                                                <div className='col-md-3'><strong>Mentor Email Address</strong></div>
+                                                <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{matchDetails.mentor_email}</span></div>
+                                            </div>
+                                        </h4>
+                                    </div>
+                                    <hr />
+                                    <div align="center">
+                                        <Link to="/matching-page/feedback-form">
+                                            <button className='btn btn-success'>Submit Feedback</button>
+                                        </Link>
+                                    </div></>
+                                )}
+                            </div>
+                        )
+                    ) : (
+                        <div>  {/* Highlighted: No matchingId case */}
+                            <h4 className='mb-3'><strong>Current Status: </strong>No Pending Matching</h4>
+                            <hr />
+                            <h5 className="mb-3">No matching in progress recorded.</h5>
                         </div>
-                    </h4>
-                    <h4>
-                        <div className='row'>
-                            <div className='col-md-3'><strong>Client School</strong></div>
-                            <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{matchDetails.client_school}</span></div>
-                        </div>
-                    </h4>
-                    <h4>
-                        <div className='row'>
-                            <div className='col-md-3'><strong>Client Phone No.</strong></div>
-                            <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{matchDetails.client_phone_no}</span></div>
-                        </div>
-                    </h4>
-                    <h4>
-                        <div className='row'>
-                            <div className='col-md-3'><strong>Client Email Address</strong></div>
-                            <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{matchDetails.client_email}</span></div>
-                        </div>
-                    </h4>
-                </div><hr /></>
-            ) : (
-                <><div className="border border-dark rounded p-3">
-                    <div>
-                    <h4>
-                        <div className='row'>
-                            <div className='col-md-3'><strong>Mentor Name</strong></div>
-                            <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{matchDetails.mentor_name}</span></div>
-                        </div>
-                    </h4>
-                    <h4>
-                        <div className='row'>
-                            <div className='col-md-3'><strong>Mentor School</strong></div>
-                            <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{matchDetails.mentor_school}</span></div>
-                        </div>
-                    </h4>
-                    <h4>
-                        <div className='row'>
-                            <div className='col-md-3'><strong>Mentor Phone No.</strong></div>
-                            <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{matchDetails.mentor_phone_no}</span></div>
-                        </div>
-                    </h4>
-                    <h4>
-                        <div className='row'>
-                            <div className='col-md-3'><strong>Mentor Email Address</strong></div>
-                            <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{matchDetails.mentor_email}</span></div>
-                        </div>
-                    </h4>
-                    </div>
-                    </div>
-                    <hr />
-                    <div align="center">
-                        <Link to="/matching-page/feedback-form">
-                            <button
-                                className='btn btn-success'
-                            >Submit Feedback</button>
-                        </Link>
-                    </div></>)}
-        </div>)}
-            </div>) : (<div className='row'>
-                <div className='col'><h2 className="mb-2" align="left" >Matching History List</h2></div>
-                <div className='col' align="right">
-                    <Link to="/matching-page/create-match">
-                        <button
-                            className='btn btn-primary'
-                        >Create Match</button>
-                    </Link>
+                    )}
                 </div>
-                <div className='col-12 mt-3'>
+            ) : (
+                <div className='row'>
+                    <div className='col'><h2 className="mb-2" align="left">Matching History List</h2></div>
+                    <div className='col' align="right">
+                        <Link to="/matching-page/create-match">
+                            <button className='btn btn-primary'>Create Match</button>
+                        </Link>
+                    </div>
+                    <div className='col-12 mt-3'>
                         <table className="table table-bordered border-dark">
                             <thead>
                                 <tr>
@@ -231,6 +206,7 @@ export default function MatchingPage() {
                                     <th style={{ textAlign: 'center' }}>Mentor Name</th>
                                     <th style={{ textAlign: 'center' }}>Mentor Matric No.</th>
                                     <th style={{ textAlign: 'center' }}>Feedback Form</th>
+                                    <th style={{ textAlign: 'center' }}>Evaluation</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -247,6 +223,14 @@ export default function MatchingPage() {
                                             onClick={() => viewFile(match.matching_id)}>View</button>
                                         </td>
                                         <td style={{ textAlign: 'center' }}>
+                                            {match.evaluation === 'Good' || match.evaluation === 'Neutral' || match.evaluation === 'Bad' ? (
+                                                match.evaluation
+                                            ) : (
+                                                <button className='btn btn-primary btn-sm' 
+                                                onClick={() => editEvaluation(match)}>Update</button>
+                                            )}
+                                        </td>
+                                        <td style={{ textAlign: 'center' }}>
                                             <button className='btn btn-danger btn-sm'
                                             onClick={() => deleteMatch(match.matching_id)}>Del</button>
                                         </td>
@@ -255,7 +239,8 @@ export default function MatchingPage() {
                             </tbody>
                         </table>
                     </div>
-            </div>)}
+                </div>
+            )}
             <Modal show={showModal} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>{modalTitle}</Modal.Title>
@@ -267,6 +252,33 @@ export default function MatchingPage() {
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
                         Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={showEditModal} onHide={handleEditClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Evaluate Feedback</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group>
+                            <Form.Label>Evaluation</Form.Label>
+                            <Form.Control as="select" value={newEvaluation} onChange={handleEvaluationChange}>
+                                <option value="">Select Status</option>
+                                <option value="Good">Good</option>
+                                <option value="Neutral">Neutral</option>
+                                <option value="Bad">Bad</option>
+                            </Form.Control>
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleEditClose}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={saveEvaluation} disabled={newEvaluation === ''}>
+                        Save Changes
                     </Button>
                 </Modal.Footer>
             </Modal>

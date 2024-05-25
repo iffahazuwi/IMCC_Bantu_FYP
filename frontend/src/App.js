@@ -14,6 +14,7 @@ import MyBookmarks from "./Bookmarks";
 import CreatePost from "./CreatePost";
 import ApplicationList from "./ApplicationList";
 import CreateMatch from "./CreateMatch";
+import MentorFeedback from "./MentorFeedback";
 
 
 const App = () => {
@@ -36,6 +37,7 @@ const App = () => {
                     <Route path="/community-page/bookmarks" element={<MyBookmarks />} />
                     <Route path="/community-page/create-post" element={<CreatePost />} />
                     <Route path="/matching-page/create-match" element={<CreateMatch />} />
+                    <Route path="/matching-page/mentor-feedback" element={<MentorFeedback />} />
                 </Routes>
             </BrowserRouter>
         </>

@@ -213,6 +213,21 @@ def update_application_status():
 
     db.session.commit()
     return jsonify({'success': 'Status updated successfully'})
+
+@app.route('/update-evaluation', methods=['POST'])
+def update_evaluation():
+    data = request.json
+    matching_id = data.get('matching_id')
+    new_evaluation = data.get('evaluation')
+
+    match = Matching.query.filter_by(matching_id=matching_id).first()
+    if not match:
+        return jsonify({'error': 'Matching not found'}), 404
+
+    match.evaluation = new_evaluation
+
+    db.session.commit()
+    return jsonify({'success': 'Evaluation updated successfully'})
     
 @app.route('/get-notifications', methods=['GET'])
 @login_required
@@ -312,11 +327,14 @@ def submit_feedback():
     feedback_desc = request.json["feedback_desc"]
     feedback_date = datetime.now()
 
-    feedback = Feedback(id=user.id, feedback_desc=feedback_desc, feedback_date=feedback_date)
-    db.session.add(feedback)
-    db.session.commit()
-
-    return 'Feedback submitted successfully!'
+    matching = Matching.query.filter_by(client_id=user.id).first()
+    if matching:
+        matching.feedback_desc = feedback_desc
+        matching.feedback_date = feedback_date
+        db.session.commit()
+        return 'Feedback submitted successfully!'
+    else:
+        return 'Matching not found', 404
 
 @app.route('/get-clients', methods=['GET'])
 @login_required
@@ -359,7 +377,6 @@ from sqlalchemy.orm import aliased
 
 @app.route('/getMatches', methods=['GET'])
 @login_required
-@admin_required
 def get_matches():
     Client = aliased(Student)
     Mentor = aliased(Student)
@@ -370,7 +387,8 @@ def get_matches():
         Client.matric_no.label('client_matric_no'),
         Mentor.name.label('mentor_name'),
         Mentor.matric_no.label('mentor_matric_no'),
-        Matching.matching_date
+        Matching.matching_date,
+        Matching.evaluation
     ).join(Client, Matching.client_id == Client.id).join(Mentor, Matching.mentor_id == Mentor.id
                                                          ).order_by(Matching.matching_date.desc()).all()
 
@@ -379,6 +397,33 @@ def get_matches():
                      "client_matric_no": match.client_matric_no,
                      "mentor_name": match.mentor_name,
                      "mentor_matric_no": match.mentor_matric_no,
+                     "matching_date": match.matching_date.strftime('%Y-%m-%d %H:%M:%S'),
+                     "evaluation": match.evaluation} for match in matches]
+    return jsonify(matches_list)
+
+@app.route('/getMentorMatches', methods=['GET'])
+@login_required
+def get_mentor_matches():
+    Client = aliased(Student)
+    Mentor = aliased(Student)
+
+    # Assuming current_user.id represents the ID of the logged-in mentor
+    matches = db.session.query(
+        Matching.matching_id,
+        Client.name.label('client_name'),
+        Client.matric_no.label('client_matric_no'),
+        Client.phone_no.label('client_phone_no'),
+        Client.email.label('client_email'),
+        Matching.matching_date
+    ).join(Client, Matching.client_id == Client.id).join(Mentor, Matching.mentor_id == Mentor.id
+                                                         ).filter(Mentor.id == current_user.id
+                                                         ).order_by(Matching.matching_date.desc()).all()
+
+    matches_list = [{"matching_id": match.matching_id, 
+                     "client_name": match.client_name, 
+                     "client_matric_no": match.client_matric_no,
+                     "client_phone_no": match.client_phone_no,
+                     "client_email": match.client_email,
                      "matching_date": match.matching_date.strftime('%Y-%m-%d %H:%M:%S')} for match in matches]
     return jsonify(matches_list)
 
@@ -423,9 +468,9 @@ def delete_match(matching_id):
 @admin_required
 def get_feedback(matching_id):
     feedback = db.session.query(
-        Feedback.feedback_desc,
-        Feedback.feedback_date
-    ).join(Matching, Feedback.id == Matching.client_id).filter(Matching.matching_id == matching_id).first()
+        Matching.feedback_desc,
+        Matching.feedback_date
+    ).filter(Matching.matching_id == matching_id).first()
 
     if feedback:
         feedback_data = {
@@ -435,6 +480,51 @@ def get_feedback(matching_id):
         return jsonify(feedback_data)
     else:
         return jsonify({"error": "No feedback found"}), 404
+
+# @app.route('/getMentorHistory', methods=['GET'])
+# @login_required
+# @admin_required
+# def get_matches():
+#     Client = aliased(Student)
+#     Mentor = aliased(Student)
+
+#     matches = db.session.query(
+#         Matching.matching_id,
+#         Client.name.label('client_name'),
+#         Client.matric_no.label('client_matric_no'),
+#         Mentor.name.label('mentor_name'),
+#         Mentor.matric_no.label('mentor_matric_no'),
+#         Matching.matching_date
+#     ).join(Client, Matching.client_id == Client.id).join(Mentor, Matching.mentor_id == Mentor.id
+#                                                          ).order_by(Matching.matching_date.desc()).all()
+
+#     matches_list = [{"matching_id": match.matching_id, 
+#                      "client_name": match.client_name, 
+#                      "client_matric_no": match.client_matric_no,
+#                      "mentor_name": match.mentor_name,
+#                      "mentor_matric_no": match.mentor_matric_no,
+#                      "matching_date": match.matching_date.strftime('%Y-%m-%d %H:%M:%S')} for match in matches]
+#     return jsonify(matches_list)
+
+# @app.route('/getMentorMatchingHistory', methods=['GET'])
+# @login_required
+# def get_mentor_matching_history():
+#     user = current_user
+
+#     if not user.is_mentor:
+#         return jsonify({"error": "You are not a mentor!"}), 403
+
+#     matchings = Matching.query.filter_by(mentor_id=user.id).all()
+#     matching_list = [
+#         {
+#             'student_name': matching.user.name,
+#             'student_matric_no': matching.student.matric_no,
+#             'student_school': matching.student.school,
+#             'match_date': matching.match_date.strftime('%Y-%m-%d')
+#         } for matching in matchings
+#     ]
+
+#     return jsonify(matching_list), 200
 
 @app.route("/login", methods=["POST"])
 def login_user_route():
@@ -463,7 +553,12 @@ def login_user_route():
 def get_user_role():
     user = current_user
     user_type = user.discriminator
-    return jsonify({"type": user_type})
+
+    if user_type == "student":
+        is_mentor = user.is_mentor
+        return jsonify({"type": user_type, "is_mentor": is_mentor, "id": user.id})
+    elif user_type == "admin":
+        return jsonify({"type": user_type, "id": user.id})
 
 @app.route("/logout", methods=["POST"])
 def logout():

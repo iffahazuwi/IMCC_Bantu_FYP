@@ -107,6 +107,9 @@ class Matching(db.Model):
     client_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     mentor_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     matching_date = db.Column(db.DateTime, default=datetime.now)
+    feedback_desc = db.Column(db.String(345), nullable=True)
+    feedback_date = db.Column(db.DateTime)
+    evaluation = db.Column(db.String(345), nullable=True)
 
     client = db.relationship('User', foreign_keys=[client_id])
     mentor = db.relationship('User', foreign_keys=[mentor_id])
