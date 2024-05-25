@@ -16,7 +16,18 @@ body {
 }
 
 .nav {
-    background-color: rgb(66, 57, 73);
+    background-color: rgb(142, 118, 160);
+    /* background-color: rgb(66, 57, 73); */
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 2rem;
+    padding: 0 1rem;
+}
+
+.nav-2 {
+    background-color: rgb(142, 118, 160);
     color: white;
     display: flex;
     justify-content: space-between;
@@ -28,6 +39,15 @@ body {
 .site-title {
     font-size: 2rem;
     gap: .5rem;
+}
+
+.site-title-2 {
+    font-size: 2rem;
+    gap: 1rem;
+    padding: .5%;
+    margin: 0;
+    list-style: none;
+    display: flex;
 }
 
 .nav ul {

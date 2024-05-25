@@ -14,8 +14,8 @@ const Login = (props) => {
         try {
             await axios.post("http://localhost:5000/login",
                 { email, password });
-
             navigate("/home");
+            window.location.reload();
         } catch (err) {
             if (err.response && err.response.status === 401) {
                 alert('Your email or password are invalid! Please try again.');
