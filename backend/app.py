@@ -465,7 +465,6 @@ def delete_match(matching_id):
 
 @app.route('/getFeedback/<matching_id>', methods=['GET'])
 @login_required
-@admin_required
 def get_feedback(matching_id):
     feedback = db.session.query(
         Matching.feedback_desc,
