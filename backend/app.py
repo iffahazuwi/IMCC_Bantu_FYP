@@ -139,6 +139,13 @@ def submit_application():
     app_date = datetime.now()
     file = request.files['file']
 
+    # noti_message = f"{user.name} submitted a Mentor Application Form."
+    # new_notification = Notification(
+    #     noti_message=noti_message,
+    #     noti_date=datetime.now(),
+    #     id=user.id
+    # )
+
     if file:
         filename = secure_filename(file.filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)

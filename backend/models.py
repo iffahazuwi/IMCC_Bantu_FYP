@@ -84,7 +84,7 @@ class Post(db.Model):
 
 class Notification(db.Model):
     __tablename__ = "notifications"
-    noti_id = db.Column(db.String(32), primary_key=True)
+    noti_id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
     noti_message = db.Column(db.String(345), nullable=False)
     noti_date = db.Column(db.DateTime, default=datetime.now)
     id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)

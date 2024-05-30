@@ -116,7 +116,7 @@ export default function CommunityPage() {
                                 {userType === 'student' && (<div>
                                 <div className=" mb-1" align="right">
                                 <button className="btn btn-warning btn-sm" onClick={() => bookmarkPost(post.post_id)}>
-                                    {bookmarkedPosts.some(b => b.post_id === post.post_id) ? 'Unfav' : 'Fav'}
+                                    {bookmarkedPosts.some(b => b.post_id === post.post_id) ? 'Unsave' : 'Save'}
                                 </button>
                                 </div></div>)}
                                 <div className=" mb-1" align="right">

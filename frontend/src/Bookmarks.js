@@ -45,7 +45,7 @@ const MyBookmarks = (props) => {
                             <div className='col-md-1 d-flex flex-column align-items-end'>
                                 <div className="mb-1" align="right">
                                     <button className="btn btn-warning btn-sm" onClick={() => bookmarkPost(bookmark.post_id)}>
-                                        {bookmarks.some(b => b.post_id === bookmark.post_id) ? 'Unfav' : 'Fav'}
+                                        {bookmarks.some(b => b.post_id === bookmark.post_id) ? 'Unsave' : 'Save'}
                                     </button>
                                 </div>
                             </div>

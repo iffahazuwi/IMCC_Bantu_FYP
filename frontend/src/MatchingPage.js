@@ -185,6 +185,11 @@ export default function MatchingPage() {
                             <h4 className='mb-3'><strong>Current Status: </strong>No Pending Matching</h4>
                             <hr />
                             <h5 className="mb-3">No matching in progress recorded.</h5>
+                            <div className='mt-4' align='center'>
+                                <Link to="/matching-page/mentor-feedback">
+                                    <button className='btn btn-primary'>View Matching History</button>
+                                </Link>
+                            </div>
                         </div>
                     )}
                 </div>
