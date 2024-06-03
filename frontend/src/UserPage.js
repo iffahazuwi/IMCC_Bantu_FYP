@@ -61,17 +61,18 @@ const UserPage = () => {
                         </Link>
                     </div>)}
                     
-                    <div className="mb-4 col" align='right'>
+                    {/* <div className="mb-4 col" align='right'>
                         <Link to="/user-page/notifications">
                             <button
                                 className='btn btn-primary'
                                 // onClick={openForm}
                             >Notification</button>
                         </Link>   
-                    </div>
+                    </div> */}
                 </div>
-                <div className='mb-4 border border-dark rounded p-3' align='center'>
-                    <img className='border border-dark mb-4' src="./user-128.png" alt="" width={120} height={120} />
+                <div align='center'>
+                <div className='user-profile border border-dark rounded' align='center'>
+                    {/* <img className='border border-dark mb-4' src="./user-128.png" alt="" width={120} height={120} /> */}
                     {userData && (
                         <>
                             <h4><strong>Name:</strong> {userData.name}</h4>
@@ -83,6 +84,7 @@ const UserPage = () => {
                             {userType === 'student' && <div><h4><strong>Mentor Status:</strong> {userData.is_mentor ? 'Yes' : 'No'}</h4></div>}
                         </>
                     )}
+                </div>
                 </div>
                 <hr />
                 <div className="p-4" align='center'>

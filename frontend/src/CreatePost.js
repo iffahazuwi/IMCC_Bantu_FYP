@@ -25,7 +25,8 @@ const CreatePost = (props) => {
     }
 
     return (
-        <div className="feedback-form-container">
+        <div className="App">
+            <div className="feedback-form-container">
             <h1 className="mb-2" align="left" >Create New Post</h1>
             <label htmlFor="post_title" className="form-label mt-2">Title</label>
                 <input type="text"
@@ -57,6 +58,7 @@ const CreatePost = (props) => {
                     <button className="btn btn-success mt-3" onClick={(e) => handleSubmit(e)} >Create</button>
                 </div>
             </div>
+        </div>
         </div>
     )
 }

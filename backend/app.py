@@ -12,6 +12,11 @@ from flask_session import Session
 from datetime import datetime
 import os
 import base64
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.metrics.pairwise import cosine_similarity
+import os
 
 app = Flask(__name__)
 app.config.from_object(ApplicationConfig)
@@ -31,6 +36,33 @@ with app.app_context():
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+# Load the data from the Excel file
+file_path = 'C:\\Users\\USER\\IMCC_Bantu_FYP\\Helperss.xlsx'
+df = pd.read_excel(file_path)
+
+# Select the columns to compare
+columns_to_compare = ['Country', 'Gender', 'School', 'Continent', 'Level', 'Language option 1', 'Language option 2', 'age_range']
+
+# One-hot encode the selected columns with handle_unknown='ignore'
+encoder = OneHotEncoder(handle_unknown='ignore')
+encoded_data = encoder.fit_transform(df[columns_to_compare]).toarray()
+
+def find_top_matches(input_data, encoded_data, df, n=5):
+    # One-hot encode the input data
+    input_encoded = encoder.transform([input_data]).toarray()
+    
+    # Calculate cosine similarity between the input data and the dataset
+    similarities = cosine_similarity(input_encoded, encoded_data).flatten()
+    
+    # Get the indices of the top n most similar people
+    top_indices = np.argsort(similarities)[-n:][::-1]
+    
+    # Get the top n most similar people from the dataframe
+    top_matches = df.iloc[top_indices].copy()
+    top_matches['Similarity'] = similarities[top_indices] * 100
+    
+    return top_matches[['Name', 'Country', 'Gender', 'School', 'Continent', 'Level', 'Language option 1', 'Language option 2', 'age_range', 'Similarity']]
 
 def admin_required(f):
     @wraps(f)
@@ -69,6 +101,25 @@ def get_current_user():
         })
     else:
         return jsonify({"error": "Unknown user type"}), 400
+    
+@app.route('/match', methods=['POST'])
+def match():
+    data = request.json
+    input_data = [
+        data['Country'],
+        data['Gender'],
+        data['School'],
+        data['Continent'],
+        data['Level'],
+        data['Language_option_1'],
+        data['Language_option_2'],
+        data['age_range']
+    ]
+
+    top_matches = find_top_matches(input_data, encoded_data, df)
+    top_matches_list = top_matches.to_dict(orient='records')
+
+    return jsonify(top_matches_list)
 
 @app.route("/register", methods=["POST"])
 def register_user():

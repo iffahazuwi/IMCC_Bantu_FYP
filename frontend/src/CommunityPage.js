@@ -61,6 +61,9 @@ export default function CommunityPage() {
     }
 
     const deletePost = async (postId) => {
+        if (!window.confirm('Are you sure you want to delete this post?')) {
+            return;
+        }
         try {
             await axios.delete(`http://localhost:5000/delete-post/${postId}`);
             setPosts(posts.filter(post => post.post_id !== postId));

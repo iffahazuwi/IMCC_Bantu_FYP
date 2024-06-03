@@ -47,7 +47,8 @@ const MentorFeedback = (props) => {
     const handleClose = () => setShowModal(false);
 
     return (
-        <div className="feedback-form-container">
+        <div className="App">
+            <div className="feedback-form-container">
             <div className='row'>
             <div><h2 className="mb-2" align="left">Matching History List</h2></div>
             <div className='col-12 mt-3'>
@@ -98,6 +99,7 @@ const MentorFeedback = (props) => {
                     </Button>
                 </Modal.Footer>
             </Modal>
+        </div>
         </div>
         </div>
     )

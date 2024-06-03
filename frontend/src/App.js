@@ -15,7 +15,7 @@ import CreatePost from "./CreatePost";
 import ApplicationList from "./ApplicationList";
 import CreateMatch from "./CreateMatch";
 import MentorFeedback from "./MentorFeedback";
-
+import RequestForm from "./RequestForm";
 
 const App = () => {
 
@@ -36,8 +36,9 @@ const App = () => {
                     <Route path="/user-page/notifications" element={<Notifications />} />
                     <Route path="/community-page/bookmarks" element={<MyBookmarks />} />
                     <Route path="/community-page/create-post" element={<CreatePost />} />
-                    <Route path="/matching-page/create-match" element={<CreateMatch />} />
+                    <Route path="/matching-page/assign-mentor" element={<CreateMatch />} />
                     <Route path="/matching-page/mentor-feedback" element={<MentorFeedback />} />
+                    <Route path="/matching-page/request-mentor" element={<RequestForm />} />
                 </Routes>
             </BrowserRouter>
         </>

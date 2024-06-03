@@ -29,7 +29,8 @@ const Register = (props) => {
     }; 
 
     return (
-        <div className="auth-form-container">
+        <div className="App">
+            <div className="auth-form-container">
             <h1 className="mt-2" align="center" >Register New User</h1>
             <div className="p-3">
                 <form className="register-form">
@@ -61,6 +62,7 @@ const Register = (props) => {
                     <Link to="/" className="link-btn" >Return to Login Page</Link>
                 </div>
             </div>
+        </div>
         </div>
     )
 }

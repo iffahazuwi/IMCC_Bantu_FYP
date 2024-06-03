@@ -34,7 +34,7 @@ const ApplicationForm = (props) => {
             });
             alert("Mentor Application has been submitted!");
 
-            navigate("/user-page");
+            navigate("/matching-page");
         } catch (err) {
             if (err.response && err.response.status === 401) {
                 alert('Unauthorized! Please log in.');
@@ -46,9 +46,8 @@ const ApplicationForm = (props) => {
     }
 
     return (
-        <div className="App">
-            <div className="feedback-form-container">
-            <h1 className="mb-2" align="left" >Mentor Application Form</h1>
+        <div className="feedback-form-container">
+            <h1 className="mb-2" align="left" >Request Mentor Form</h1>
 
             <div className="mt-2">
                 <label htmlFor="app_gender" className="form-label">Gender</label>
@@ -122,74 +121,20 @@ const ApplicationForm = (props) => {
                 </select>
                 
                 <label htmlFor="app_language" className="form-label mt-3">Language 1</label>
-                <select
-                    className="form-select"
-                    value={app_language}
-                    onChange={(e) => setGender(e.target.value)}
-                >
-                    <option value="">Select First Preffered Language</option>
-                    <option value="Mandarin">Mandarin</option>
-                    <option value="Persian Farsi">Persian Farsi</option>
-                    <option value="Arabic">Arabic</option>
-                    <option value="Bengali">Bengali</option>
-                    <option value="Thai">Thai</option>
-                    <option value="Somali">Somali</option>
-                    <option value="Hindi">Hindi</option>
-                    <option value="English">English</option>
-                    <option value="Malay">Malay</option>
-                    <option value="Punjabi">Punjabi</option>
-                    <option value="Romanian">Romanian</option>
-                    <option value="Creole">Creole</option>
-                    <option value="Russian">Russian</option>
-                    <option value="Filipino">Filipino</option>
-                    <option value="Cantonese">Cantonese</option>
-                    <option value="Shona">Shona</option>
-                    <option value="Swahili">Swahili</option>
-                    <option value="Vietnamese">Vietnamese</option>
-                    <option value="Korean">Korean</option>
-                    <option value="Burmese">Burmese</option>
-                    <option value="Sinhala">Sinhala</option>
-                    <option value="Kurdish">Kurdish</option>
-                    <option value="Berber">Berber</option>
-                    <option value="Ndebele">Ndebele</option>
-                    <option value="French">French</option>
-                    <option value="Tamil">Tamil</option>
-                </select>
+                    <input type="text"
+                        value={app_language}
+                        className="form-control"
+                        placeholder="Please enter your language(s) used..."
+                        onChange={(e) => setLanguage(e.target.value)}
+                    />
 
 <               label htmlFor="app_skill" className="form-label mt-3">Language 2</label>
-<select
-                    className="form-select"
-                    value={app_skill}
-                    onChange={(e) => setGender(e.target.value)}
-                >
-                    <option value="">Select Second Preffered Language</option>
-                    <option value="Mandarin">Mandarin</option>
-                    <option value="Persian Farsi">Persian Farsi</option>
-                    <option value="Arabic">Arabic</option>
-                    <option value="Bengali">Bengali</option>
-                    <option value="Thai">Thai</option>
-                    <option value="Somali">Somali</option>
-                    <option value="Hindi">Hindi</option>
-                    <option value="English">English</option>
-                    <option value="Malay">Malay</option>
-                    <option value="Punjabi">Punjabi</option>
-                    <option value="Romanian">Romanian</option>
-                    <option value="Creole">Creole</option>
-                    <option value="Russian">Russian</option>
-                    <option value="Filipino">Filipino</option>
-                    <option value="Cantonese">Cantonese</option>
-                    <option value="Shona">Shona</option>
-                    <option value="Swahili">Swahili</option>
-                    <option value="Vietnamese">Vietnamese</option>
-                    <option value="Korean">Korean</option>
-                    <option value="Burmese">Burmese</option>
-                    <option value="Sinhala">Sinhala</option>
-                    <option value="Kurdish">Kurdish</option>
-                    <option value="Berber">Berber</option>
-                    <option value="Ndebele">Ndebele</option>
-                    <option value="French">French</option>
-                    <option value="Tamil">Tamil</option>
-                </select>
+                    <input type="text"
+                        value={app_skill}
+                        className="form-control"
+                        placeholder="Please enter your skill(s)..."
+                        onChange={(e) => setSkill(e.target.value)}
+                    />
 
                 {/* <label htmlFor="file" className="form-label mt-3">Upload your certificate here:</label>
                     <div className="mb-2">
@@ -201,7 +146,7 @@ const ApplicationForm = (props) => {
             <div className="row mb-3">
                 <div className='col' align="left">
                     {/* <button className="btn btn-primary mt-3" onClick={(e) => handleSubmit(e)} >Cancel</button> */}
-                    <Link to="/user-page">
+                    <Link to="/matching-page">
                         <button
                             className='btn btn-primary mt-3'
                             //onClick={openFeedbackForm}
@@ -212,7 +157,6 @@ const ApplicationForm = (props) => {
                     <button className="btn btn-success mt-3" onClick={(e) => handleSubmit(e)} >Submit</button>
                 </div>
             </div>
-        </div>
         </div>
     )
 }

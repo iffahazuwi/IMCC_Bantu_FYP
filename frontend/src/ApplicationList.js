@@ -38,6 +38,9 @@ export default function ApplicationList() {
     };
 
     const saveStatus = async () => {
+        if (!window.confirm('Are you sure you want to update this status?')) {
+            return;
+        }
         try {
             await axios.post('http://localhost:5000/update-application-status', {
                 app_id: selectedApplication.app_id,
@@ -58,7 +61,7 @@ export default function ApplicationList() {
     };
 
     return (
-        <div>
+        <div className='App'>
             <div className="feedback-form-container">
                 <h1 className="mb-2" align="left" >Mentor Application List</h1>
                 <div className='col-12 mt-3'>
@@ -118,7 +121,7 @@ export default function ApplicationList() {
                     <p><strong>Country:</strong> {selectedApplication.app_country}</p>
                     <p><strong>Language:</strong> {selectedApplication.app_language}</p>
                     <p><strong>Skill:</strong> {selectedApplication.app_skill}</p>
-                    <p><strong>Certificate:</strong> <a href={`http://localhost:5000/uploads/${selectedApplication.app_filedata}`} target="_blank" rel="noopener noreferrer">{selectedApplication.app_filename}</a></p>
+                    {/* <p><strong>Certificate:</strong> <a href={`http://localhost:5000/uploads/${selectedApplication.app_filedata}`} target="_blank" rel="noopener noreferrer">{selectedApplication.app_filename}</a></p> */}
                     <p><strong>Date:</strong> {selectedApplication.app_date}</p>
                 </Modal.Body>
                 <Modal.Footer>

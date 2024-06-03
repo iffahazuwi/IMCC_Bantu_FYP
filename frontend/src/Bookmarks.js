@@ -32,7 +32,8 @@ const MyBookmarks = (props) => {
     };    
 
     return (
-        <div className="feedback-form-container">
+        <div className="App">
+            <div className="feedback-form-container">
             <h1 className="mb-2" align="left" >My Bookmark List</h1>
             <div className='posts pt-1'>
                 {bookmarks.map((bookmark) => (
@@ -63,6 +64,7 @@ const MyBookmarks = (props) => {
                     className='btn btn-primary mb-3 ms-3 fixed-bottom'
                 >Back</button>
             </Link>
+        </div>
         </div>
     )
 }

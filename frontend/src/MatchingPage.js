@@ -78,6 +78,9 @@ export default function MatchingPage() {
     };
 
     const saveEvaluation = async () => {
+        if (!window.confirm('Are you sure you want to update this evaluation?')) {
+            return;
+        }
         try {
             await axios.post('http://localhost:5000/update-evaluation', {
                 matching_id: selectedMatch.matching_id,
@@ -112,7 +115,7 @@ export default function MatchingPage() {
                                 <h5 className="mb-3">Matching process has completed!<br />
                                     Details of your resulted partner are provided below:</h5>
                                 {matchDetails.is_mentor ? (
-                                    <><div className="border border-dark rounded p-3">
+                                    <><div className="matching-partner-details border border-dark rounded">
                                         <h4>
                                             <div className='row'>
                                                 <div className='col-md-3'><strong>Client Name</strong></div>
@@ -145,7 +148,7 @@ export default function MatchingPage() {
                                     </div>
                                     </>
                                 ) : (
-                                    <><div className="border border-dark rounded p-3">
+                                    <><div className="matching-partner-details border border-dark rounded">
                                         <h4>
                                             <div className='row'>
                                                 <div className='col-md-3'><strong>Mentor Name</strong></div>
@@ -185,11 +188,16 @@ export default function MatchingPage() {
                             <h4 className='mb-3'><strong>Current Status: </strong>No Pending Matching</h4>
                             <hr />
                             <h5 className="mb-3">No matching in progress recorded.</h5>
-                            <div className='mt-4' align='center'>
+                            {/* <div className='mt-4' align='center'>
                                 <Link to="/matching-page/mentor-feedback">
                                     <button className='btn btn-primary'>View Matching History</button>
                                 </Link>
-                            </div>
+                            </div> */}
+                            {/* <div className='mt-4' align='center'>
+                                <Link to="/matching-page/request-mentor">
+                                    <button className='btn btn-success'>Request Mentor</button>
+                                </Link>
+                            </div> */}
                         </div>
                     )}
                 </div>
@@ -197,8 +205,8 @@ export default function MatchingPage() {
                 <div className='row'>
                     <div className='col'><h2 className="mb-2" align="left">Matching History List</h2></div>
                     <div className='col' align="right">
-                        <Link to="/matching-page/create-match">
-                            <button className='btn btn-primary'>Create Match</button>
+                        <Link to="/matching-page/assign-mentor">
+                            <button className='btn btn-primary'>Assign Mentor</button>
                         </Link>
                     </div>
                     <div className='col-12 mt-3'>

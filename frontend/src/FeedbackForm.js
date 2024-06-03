@@ -24,7 +24,8 @@ const FeedbackForm = (props) => {
     }
 
     return (
-        <div className="feedback-form-container">
+        <div className="App">
+            <div className="feedback-form-container">
             <h1 className="mb-2" align="left" >Feedback Form</h1>
             <label htmlFor="feedback_desc" className="form-label mt-2">Comments:</label>
                     <textarea
@@ -48,6 +49,7 @@ const FeedbackForm = (props) => {
                     </button>
                 </div>
             </div>
+        </div>
         </div>
     )
 }

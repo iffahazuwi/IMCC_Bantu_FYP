@@ -41,8 +41,14 @@ const CreateMatch = (props) => {
     }
 
     return (
-        <div className="feedback-form-container">
-            <h1 className="mb-2" align="left" >Create New Match</h1>
+        <div className="App">
+            <div className="feedback-form-container">
+            <h1 className="mb-3" align="left" >Assign Mentor</h1>
+            {/* <h4>**Notes: When admin select a client's name, the system will automatically print out
+                5 mentors with highest level of similarities between them. Then, when admin click 
+                'Assign' button, the match will be added in the matching list.**
+            </h4> */}
+            <h6>**Select client's name to generate list of compatible mentors.</h6>
 
             <label htmlFor="client" className="form-label mt-2">Client Name</label>
             <select
@@ -55,7 +61,7 @@ const CreateMatch = (props) => {
                     <option key={client.id} value={client.id}>{client.name}</option>
                 ))}
             </select>
-            <label htmlFor="mentor" className="form-label mt-2">Mentor Name</label>
+            {/* <label htmlFor="mentor" className="form-label mt-2">Mentor Name</label>
             <select
                 value={selectedMentor}
                 onChange={(e) => setSelectedMentor(e.target.value)}
@@ -65,9 +71,9 @@ const CreateMatch = (props) => {
                 {mentors.map(mentor => (
                     <option key={mentor.id} value={mentor.id}>{mentor.name}</option>
                 ))}
-            </select>
+            </select> */}
 
-            <div className="row pt-1">
+            <div className="row fixed-bottom p-3">
                 <div className='col' align="left">
                     <Link to="/matching-page">
                         <button
@@ -77,9 +83,10 @@ const CreateMatch = (props) => {
                 </div>
                 <div className='col' align="right">
                     <button className="btn btn-success mt-3" onClick={(e) => handleSubmit(e)} 
-                    disabled={selectedClient === '' || selectedMentor === ''}>Create</button>
+                    disabled={selectedClient === '' || selectedMentor === ''}>Assign</button>
                 </div>
             </div>
+        </div>
         </div>
     )
 }

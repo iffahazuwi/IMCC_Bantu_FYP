@@ -24,7 +24,8 @@ const Login = (props) => {
     }
 
     return (
-        <div className="auth-form-container">
+        <div className="App">
+            <div className="auth-form-container">
             <h1 className="mt-2" align="center" >Log In</h1>
             <div className="p-3">
                 <form className="login-form" onSubmit={handleSubmit}>
@@ -44,6 +45,7 @@ const Login = (props) => {
                     <Link to="/register" className="link-btn">Click here to Register new user account</Link>
                 </div>
             </div>
+        </div>
         </div>
     )
 }
