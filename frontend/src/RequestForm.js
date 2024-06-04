@@ -148,7 +148,7 @@ const ApplicationForm = (props) => {
                     {/* <button className="btn btn-primary mt-3" onClick={(e) => handleSubmit(e)} >Cancel</button> */}
                     <Link to="/matching-page">
                         <button
-                            className='btn btn-primary mt-3'
+                            className='btn btn-secondary mt-3'
                             //onClick={openFeedbackForm}
                         >Cancel</button>
                     </Link>

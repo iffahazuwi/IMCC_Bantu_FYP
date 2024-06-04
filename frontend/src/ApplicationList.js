@@ -107,7 +107,7 @@ export default function ApplicationList() {
                     
                 <Link to="/user-page">
                     <button
-                        className='btn btn-primary mb-3 ms-3 fixed-bottom'
+                        className='btn btn-secondary mb-3 ms-3 fixed-bottom'
                     >Back</button>
                 </Link>
             </div>

@@ -39,7 +39,7 @@ const FeedbackForm = (props) => {
                 <div className='col' align="left">
                     <Link to="/matching-page">
                         <button
-                            className='btn btn-primary mt-3'
+                            className='btn btn-secondary mt-3'
                         >Cancel</button>
                     </Link>
                 </div>

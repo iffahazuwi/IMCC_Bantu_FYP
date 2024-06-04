@@ -6,7 +6,7 @@ const CreateMatch = (props) => {
 
     const navigate = useNavigate();
     const [clients, setClients] = useState([]);
-    const [mentors, setMentors] = useState([]);
+    // const [mentors, setMentors] = useState([]);
     const [selectedClient, setSelectedClient] = useState('');
     const [selectedMentor, setSelectedMentor] = useState('');
 
@@ -16,8 +16,8 @@ const CreateMatch = (props) => {
                 const clientsResponse = await axios.get('http://localhost:5000/get-clients', { withCredentials: true });
                 setClients(clientsResponse.data);
 
-                const mentorsResponse = await axios.get('http://localhost:5000/get-mentors', { withCredentials: true });
-                setMentors(mentorsResponse.data);
+                // const mentorsResponse = await axios.get('http://localhost:5000/get-mentors', { withCredentials: true });
+                // setMentors(mentorsResponse.data);
             } catch (error) {
                 console.error('Error fetching clients and mentors:', error);
             }
@@ -61,6 +61,10 @@ const CreateMatch = (props) => {
                     <option key={client.id} value={client.id}>{client.name} ({client.matric_no})</option>
                 ))}
             </select>
+
+            <div align='center'>
+                <button className="btn btn-primary mt-2">Find Matches</button>
+            </div>
             {/* <label htmlFor="mentor" className="form-label mt-2">Mentor Name</label>
             <select
                 value={selectedMentor}
@@ -77,7 +81,7 @@ const CreateMatch = (props) => {
                 <div className='col' align="left">
                     <Link to="/matching-page">
                         <button
-                            className='btn btn-primary mt-3'
+                            className='btn btn-secondary mt-3'
                         >Cancel</button>
                     </Link>
                 </div>
