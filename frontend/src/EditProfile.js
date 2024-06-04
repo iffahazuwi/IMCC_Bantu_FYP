@@ -1,89 +1,66 @@
-import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
 import axios from './axios';
 
-const Register = (props) => {
+const EditProfile = ({ userData, onSave, onCancel }) => {
+    const [formData, setFormData] = useState({ ...userData });
 
-    const navigate = useNavigate();
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
+    };
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [name, setName] = useState("");
-    const [matric_no, setMatricNumber] = useState("");
-    const [phone_no, setPhoneNumber] = useState("");
-    const [school, setSchool] = useState("");
-    const [gender, setGender] = useState("");
-    const [country, setCountry] = useState("");
-    const [language_1, setLanguage1] = useState("");
-    const [language_2, setLanguage2] = useState("");
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        const data = {
-            email,
-            password,
-            name,
-            matric_no,
-            phone_no,
-            school,
-            gender,
-            country,
-            language_1,
-            language_2
-        };
-
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         try {
-            await axios.post("http://localhost:5000/register", data);
-            alert("Your account has been registered!");
-
-            navigate("/home");
-        } catch (err) {
-            if (err.response && err.response.status === 409) {
-                alert('User already exists! Please use your email and password to login.');
-            } else {
-                alert('An error occurred. Please try again.');
-            }
+            const response = await axios.put(`http://localhost:5000/updateUser`, formData, { withCredentials: true });
+            onSave(response.data);
+            alert("Post created successfully!")
+        } catch (error) {
+            console.error("Error updating user profile:", error);
         }
     };
 
     return (
-        <div className="App">
-            <div className="auth-form-container">
-            <h1 className="mt-2" align="center" >Register New User</h1>
-            <div className="p-3">
-                <form className="register-form">
-
-                    <label className="mb-1" htmlFor="name">Full Name</label>
-                    <input className="mb-2"value={name} onChange={(e) => setName(e.target.value)} id="name" placeholder="Please enter your full name..." />
-            
-                    <label className="mb-1" htmlFor="matric_no">Matric Number</label>
-                    <input className="mb-2" value={matric_no} onChange={(e) => setMatricNumber(e.target.value)} id="matric_no" placeholder="Please enter your matric number..." />
-            
-                    <label className="mb-1" htmlFor="school">School</label>
-                    <input className="mb-2" value={school} onChange={(e) => setSchool(e.target.value)} id="school" placeholder="Please enter your school..." />
-                    
-                    <label className="mb-1" htmlFor="phone_no">Phone Number</label>
-                    <input className="mb-2"value={phone_no} onChange={(e) => setPhoneNumber(e.target.value)} id="phone_no" placeholder="Please enter your phone number..." />
-
-                    <label className="mb-1" htmlFor="gender">Gender</label>
-                    <select
-                    className="form-select mb-2"
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value)}
+        <form onSubmit={handleSubmit}>
+            <h2>Edit Profile</h2>
+            <div className='col'>
+            <label className='row'>
+                Name:
+                <input type="text" name="name" value={formData.name} onChange={handleChange} />
+            </label>
+            {formData.matric_no && (
+                <>
+                    <label className='row'>
+                        Matric Number:
+                        <input type="text" name="matric_no" value={formData.matric_no} onChange={handleChange} />
+                    </label>
+                    <label className='row'>
+                        School:
+                        <input type="text" name="school" value={formData.school} onChange={handleChange} />
+                    </label>
+                    <label className='row'>
+                        Gender:
+                        <select
+                        name='gender'
+                        className="form-select mb-2"
+                        value={formData.gender}
+                        onChange={handleChange}
+                        >
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        </select>
+                    </label>
+                    <label className='row'>
+                        Country:
+                        <select
+                        name='country'
+                        className="form-select mb-2"
+                        value={formData.country}
+                        onChange={handleChange}
                     >
-                    <option value="">Please select your gender...</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    </select>
-
-                    <label className="mb-1" htmlFor="country">Origin Country</label>
-                    <select
-                    className="form-select mb-2"
-                    value={country}
-                    onChange={(e) => setCountry(e.target.value)}
-                    >
-                    <option value="">Please select your origin country...</option>
                     <option value="Malaysia">Malaysia</option>
                     <option value="China">China</option>
                     <option value="Iran">Iran</option>
@@ -129,14 +106,15 @@ const Register = (props) => {
                     <option value="Ghana">Ghana</option>
                     <option value="Bahrain">Bahrain</option>
                     </select>
-
-                    <label className="mb-1" htmlFor="language_1">Language 1</label>
-                    <select
-                    className="form-select mb-2"
-                    value={language_1}
-                    onChange={(e) => setLanguage1(e.target.value)}
+                    </label>
+                    <label className='row'>
+                        Language 1:
+                        <select
+                        name='language_1'
+                        className="form-select mb-2"
+                        value={formData.language_1}
+                        onChange={handleChange}
                 >
-                    <option value="">Please select your preferred language...</option>
                     <option value="Mandarin">Mandarin</option>
                     <option value="Persian Farsi">Persian Farsi</option>
                     <option value="Arabic">Arabic</option>
@@ -166,14 +144,15 @@ const Register = (props) => {
                     <option value="French">French</option>
                     <option value="Tamil">Tamil</option>
                 </select>
-
-                    <label className="mb-1" htmlFor="language_2">Language 2</label>
-                    <select
+                    </label>
+                    <label className='row'>
+                        Language 2:
+                        <select
+                        name='language_2'
                     className="form-select mb-2"
-                    value={language_2}
-                    onChange={(e) => setLanguage2(e.target.value)}
+                    value={formData.language_2}
+                    onChange={handleChange}
                 >
-                    <option value="">Please select your second preffered language...</option>
                     <option value="Mandarin">Mandarin</option>
                     <option value="Persian Farsi">Persian Farsi</option>
                     <option value="Arabic">Arabic</option>
@@ -203,25 +182,24 @@ const Register = (props) => {
                     <option value="French">French</option>
                     <option value="Tamil">Tamil</option>
                 </select>
-                    
-                    <label className="mb-1" htmlFor="email">USM Student Email</label>
-                    <input className="mb-2" value={email} onChange={(e) => setEmail(e.target.value)} id="email" placeholder="Please enter your student email..." />
-            
-                    <label className="mb-1" htmlFor="password">Password</label>
-                    <input className="mb-2" value={password} onChange={(e) => setPassword(e.target.value)} type="password" id="password" placeholder="Please enter your password..." />
-
-                    <div align="center">
-                        <button className="btn btn-success mt-3" onClick={(e) => handleSubmit(e)} >Register</button>
-                    </div>
-                    
-                </form>
-                <div className="mt-4" align="center">
-                    <Link to="/" className="link-btn" >Return to Login Page</Link>
-                </div>
+                    </label>
+                </>
+            )}
+            <label className='row'>
+                Phone Number:
+                <input type="text" name="phone_no" value={formData.phone_no} onChange={handleChange} />
+            </label>
+            <label className='row'>
+                Email:
+                <input type="email" name="email" value={formData.email} onChange={handleChange} />
+            </label>
             </div>
-        </div>
-        </div>
-    )
-}
+            <div className='row mt-3'>
+                <div className='col'><button type="button" className='btn btn-secondary' onClick={onCancel}>Cancel</button></div>
+                <div className='col'><button type="submit" className='btn btn-success'>Save</button></div>
+            </div>
+        </form>
+    );
+};
 
-export default Register
+export default EditProfile;

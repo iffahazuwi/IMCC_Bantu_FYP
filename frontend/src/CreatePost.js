@@ -11,6 +11,10 @@ const CreatePost = (props) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        if (!post_title.trim() || !post_desc.trim()) {
+            alert('Title and description cannot be empty');
+            return;
+        }
         try {
             await axios.post("http://localhost:5000/insert-post",
                 { post_title, post_desc });

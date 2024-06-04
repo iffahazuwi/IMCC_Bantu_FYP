@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import './App.css';
 import axios from './axios';
+import EditProfile from './EditProfile';
 
 const UserPage = () => {
 
     const [userType, setUserType] = useState('');
     const [userData, setUserData] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
 
     const logoutUser = async () => {
         await axios.post("//localhost:5000/logout");
@@ -37,6 +39,23 @@ const UserPage = () => {
         fetchUserProfile();
 
     }, []);
+
+    const handleSave = async (updatedData) => {
+        if (!window.confirm('Are you sure you want save changes?')) {
+            return;
+        }
+        try {
+            const response = await axios.put("//localhost:5000/updateUser", updatedData);
+            setUserData(response.data.user);
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Error updating user:', error);
+        }
+    };
+
+    const handleCancel = () => {
+        setIsEditing(false);
+    };
 
     return (
         <div className="App">
@@ -73,17 +92,30 @@ const UserPage = () => {
                 <div align='center'>
                 <div className='user-profile border border-dark rounded' align='center'>
                     {/* <img className='border border-dark mb-4' src="./user-128.png" alt="" width={120} height={120} /> */}
-                    {userData && (
-                        <>
-                            <h4><strong>Name:</strong> {userData.name}</h4>
-                            {userType === 'student' && 
-                            (<div><h4><strong>Matric Number:</strong> {userData.matric_no}</h4>
-                            <h4><strong>School:</strong> {userData.school}</h4></div>)}
-                            <h4><strong>Contact Number:</strong> {userData.phone_no}</h4>
-                            <h4><strong>Email Address:</strong> {userData.email}</h4>
-                            {userType === 'student' && <div><h4><strong>Mentor Status:</strong> {userData.is_mentor ? 'Yes' : 'No'}</h4></div>}
-                        </>
-                    )}
+                    {isEditing ? (
+                            <EditProfile userData={userData} onSave={handleSave} onCancel={handleCancel} />
+                        ) : (
+                            userData && (
+                                <>
+                                    <h4><strong>Name:</strong> {userData.name}</h4>
+                                    {userType === 'student' && 
+                                    (<div><h4><strong>Matric Number:</strong> {userData.matric_no}</h4>
+                                    <h4><strong>School:</strong> {userData.school}</h4></div>)}
+                                    <h4><strong>Contact Number:</strong> {userData.phone_no}</h4>
+                                    <h4><strong>Email Address:</strong> {userData.email}</h4>
+                                    {userType === 'student' && 
+                                    <div><h4><strong>Gender:</strong> {userData.gender}</h4>
+                                    <h4><strong>Origin Country:</strong> {userData.country}</h4>
+                                    <h4><strong>Language(s):</strong> {userData.language_1}, {userData.language_2}</h4>
+                                    <h4><strong>Mentor Status:</strong> {userData.is_mentor ? 'Yes' : 'No'}</h4></div>}
+                                </>
+                            )
+                        )}
+                        {!isEditing && (
+                            <div className='mt-3' align='center'>
+                                <button className='btn btn-success' onClick={() => setIsEditing(true)}>Edit Profile</button>
+                            </div>
+                        )}
                 </div>
                 </div>
                 <hr />

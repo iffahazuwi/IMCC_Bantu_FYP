@@ -32,13 +32,22 @@ class Student(User):
     matric_no = db.Column(db.String(20), nullable=True)
     school = db.Column(db.String(345), nullable=True)
     is_mentor = db.Column(db.Boolean, default=False, nullable=False)
+    gender = db.Column(db.String(32), nullable=True)
+    country = db.Column(db.String(32), nullable=True)
+    language_1 = db.Column(db.String(32), nullable=True)
+    language_2 = db.Column(db.String(32), nullable=True)
 
     __mapper_args__ = {'polymorphic_identity': 'student'}
-    def __init__(self, name, email, password, phone_no, matric_no, school, is_mentor=False):
+    def __init__(self, name, email, password, phone_no, matric_no, school, gender,  
+                 country, language_1, language_2, is_mentor=False):
         super().__init__(name, email, password, phone_no)
         self.matric_no = matric_no
         self.school = school
         self.is_mentor = is_mentor
+        self.gender = gender
+        self.country = country
+        self.language_1 = language_1
+        self.language_2 = language_2
 
 class Admin(User):
     __tablename__ = 'admins'
@@ -113,3 +122,14 @@ class Matching(db.Model):
 
     client = db.relationship('User', foreign_keys=[client_id])
     mentor = db.relationship('User', foreign_keys=[mentor_id])
+
+class Reply(db.Model):
+    __tablename__ = "replies"
+    reply_id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
+    post_id = db.Column(db.String(32), db.ForeignKey('posts.post_id', ondelete='CASCADE'), nullable=False)
+    id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    reply_content = db.Column(db.String(345), nullable=True)
+    reply_date = db.Column(db.DateTime, default=datetime.now)
+
+    user = db.relationship('Student', backref=db.backref('replies', lazy=True))
+    post = db.relationship('Post', backref=db.backref('replies', lazy=True, cascade='all, delete'))

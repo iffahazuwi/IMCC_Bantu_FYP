@@ -9,6 +9,8 @@ export default function CommunityPage() {
     const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
     const [userType, setUserType] = useState('');
     const [isMentor, setIsMentor] = useState(false);
+    const [replyContents, setReplyContents] = useState({});
+    const [showReplies, setShowReplies] = useState({});
 
     useEffect(() => {
         const fetchUserRole = async () => {
@@ -43,6 +45,45 @@ export default function CommunityPage() {
         fetchPosts();
         fetchBookmarks();
     }, []);
+
+    const handleReplyChange = (event, postId) => {
+        const { value } = event.target;
+        setReplyContents(prevState => ({
+            ...prevState,
+            [postId]: value, // Store reply content for the specific post
+        }));
+    };
+
+    const submitReply = async (postId) => {
+        if (!replyContents[postId] || replyContents[postId].trim() === '') {
+            alert('Reply content cannot be empty!');
+            return;
+        }
+        try {
+            const response = await axios.post('http://localhost:5000/add-reply', {
+                post_id: postId,
+                reply_content: replyContents[postId], // Get reply content for the specific post
+            }, { withCredentials: true });
+
+            // Refresh posts to show the new reply
+            const postsResponse = await axios.get('http://127.0.0.1:5000/get-posts');
+            setPosts(postsResponse.data);
+            setReplyContents(prevState => ({
+                ...prevState,
+                [postId]: '', // Clear reply content for the specific post after submission
+            }));
+            alert(response.data.message);
+        } catch (error) {
+            console.error('Error adding reply:', error);
+        }
+    };
+
+    const toggleReplies = (postId) => {
+        setShowReplies(prevState => ({
+            ...prevState,
+            [postId]: !prevState[postId], // Toggle the show/hide state
+        }));
+    };
 
     if (userType === 'student' && !isMentor) {
         return (
@@ -132,6 +173,38 @@ export default function CommunityPage() {
                             <div className='col'><p><strong>Posted by:</strong> {post.name}</p></div>
                             <div className='col' align="right"><small>{post.date}</small></div>
                         </div>
+                        <hr/>
+                        <div className='row mb-2'>
+                            <div className='col'>
+                                <h6>Replies:
+                                {post.replies.length > 0 &&
+                                    <button className='btn btn-link btn-sm' onClick={() => toggleReplies(post.post_id)}>
+                                        {showReplies[post.post_id] ? 'Hide Replies' : 'View Replies'}
+                                    </button>
+                                }</h6>
+                                {showReplies[post.post_id] && post.replies.map(reply => (
+                                    <div key={reply.reply_id} className='reply row'>
+                                    <div className='col-md-9'><strong>{reply.reply_name}:</strong>  {reply.reply_content}</div>
+                                    <div className='col-md-3' align='right'><small>{reply.reply_date}</small></div>
+                                </div>
+                                ))}
+                            </div>
+                        </div>
+                        {userType === 'student' && (<div>
+                            <div className='row'>
+                            <div className='col mt-1'>
+                                <input
+                                    type='text'
+                                    className="form-control"
+                                    placeholder="Add a reply"
+                                    value={replyContents[post.post_id] || ''} // Modified value to use specific reply content for each post
+                                    onChange={(event) => handleReplyChange(event, post.post_id)} // Modified onChange handler to include postId parameter
+                                />
+                                <button className="btn btn-primary btn-sm mt-2 mb-2" onClick={() => submitReply(post.post_id)}>Reply</button>
+                            </div>
+                        </div>
+                        </div>)}
+                        
                     </div>
                 ))}
             </div>

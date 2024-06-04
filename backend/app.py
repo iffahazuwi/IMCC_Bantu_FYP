@@ -5,7 +5,7 @@ from flask_cors import CORS
 from flask_login import login_user, LoginManager, login_required, logout_user, current_user
 from sqlalchemy.orm import aliased
 from functools import wraps
-from models import Matching, Student, db, User, Feedback, Application, Post, Notification, Admin, Bookmark
+from models import Matching, Reply, Student, db, User, Feedback, Application, Post, Notification, Admin, Bookmark
 from config import ApplicationConfig
 from werkzeug.utils import secure_filename
 from flask_session import Session
@@ -97,7 +97,61 @@ def get_current_user():
         "phone_no": user.phone_no,
         "email": user.email,
         "school": user.school,
-        "is_mentor": user.is_mentor
+        "is_mentor": user.is_mentor,
+        "gender": user.gender,
+        "country": user.country,
+        "language_1": user.language_1,
+        "language_2": user.language_2,
+        })
+    else:
+        return jsonify({"error": "Unknown user type"}), 400
+
+@app.route("/updateUser", methods=["PUT"])
+@login_required
+def update_user():
+    data = request.get_json()
+    user = current_user
+
+    user.name = data.get("name", user.name)
+    user.phone_no = data.get("phone_no", user.phone_no)
+    user.email = data.get("email", user.email)
+
+    if isinstance(user, Student):
+        user.matric_no = data.get("matric_no", user.matric_no)
+        user.school = data.get("school", user.school)
+        user.gender = data.get("gender", user.gender)
+        user.country = data.get("country", user.country)
+        user.language_1 = data.get("language_1", user.language_1)
+        user.language_2 = data.get("language_2", user.language_2)
+
+    db.session.commit()
+
+    if isinstance(user, Admin):
+        return jsonify({
+            "message": "Profile updated successfully",
+            "user": {
+                "id": user.id,
+                "name": user.name,
+                "phone_no": user.phone_no,
+                "email": user.email
+            }
+        })
+    elif isinstance(user, Student):
+        return jsonify({
+            "message": "Profile updated successfully",
+            "user": {
+                "id": user.id,
+                "name": user.name,
+                "matric_no": user.matric_no,
+                "phone_no": user.phone_no,
+                "email": user.email,
+                "school": user.school,
+                "is_mentor": user.is_mentor,
+                "gender": user.gender,
+                "country": user.country,
+                "language_1": user.language_1,
+                "language_2": user.language_2
+            }
         })
     else:
         return jsonify({"error": "Unknown user type"}), 400
@@ -131,6 +185,10 @@ def register_user():
     school = request.json["school"]
     is_mentor = False
     type = "student"
+    gender = request.json["gender"]
+    country = request.json["country"]
+    language_1 = request.json["language_1"]
+    language_2 = request.json["language_2"]
 
     if email.endswith("@usm.my"):
         type = "admin"
@@ -147,7 +205,8 @@ def register_user():
         new_user = Admin(email=email, password=hashed_password, name=name, phone_no=phone_no)
     else:
         new_user = Student(email=email, password=hashed_password, name=name, matric_no=matric_no, 
-                       phone_no=phone_no, school=school, is_mentor=is_mentor)
+                       phone_no=phone_no, school=school, is_mentor=is_mentor, gender=gender,
+                       country=country, language_1=language_1, language_2=language_2)
     db.session.add(new_user)
     db.session.commit()
     
@@ -161,7 +220,11 @@ def register_user():
             "phone_no": new_user.phone_no,
             "email": new_user.email,
             "school": new_user.school,
-            "is_mentor": new_user.is_mentor
+            "is_mentor": new_user.is_mentor,
+            "gender": new_user.gender,
+            "country": new_user.country,
+            "language_1": new_user.language_1,
+            "language_2": new_user.language_2
         })
     elif type == 'admin':
         return jsonify({
@@ -318,17 +381,50 @@ def insert_post():
 @app.route('/get-posts', methods=['GET'])
 def get_posts():
     posts = Post.query.order_by(Post.post_date.desc()).all()
-    posts_list = [
-        {
-            'post_id': post.post_id,
-            'title': post.post_title,
-            'description': post.post_desc,
-            'date': post.post_date.strftime('%Y-%m-%d'),
-            'name': post.user.name
-        }
-        for post in posts
-    ]
-    return jsonify(posts_list)
+    posts_data = []
+    for post in posts:
+        replies = Reply.query.filter_by(post_id=post.post_id).order_by(Reply.reply_date.asc()).all()
+        replies_data = []
+        for reply in replies:
+            replies_data.append({
+                "reply_id": reply.reply_id,
+                "reply_content": reply.reply_content,
+                "reply_date": reply.reply_date,
+                "user_id": reply.id,
+                "reply_name": reply.user.name
+                # Add more fields if necessary
+            })
+        posts_data.append({
+            "post_id": post.post_id,
+            "title": post.post_title,
+            "description": post.post_desc,
+            "date": post.post_date,
+            "name": post.user.name,  # Assuming you have a relationship with the User model
+            "replies": replies_data
+        })
+    return jsonify(posts_data)
+
+@app.route('/add-reply', methods=['POST'])
+@login_required
+def add_reply():
+    user = current_user
+
+    data = request.json
+    post_id = data.get('post_id')
+    # user_id = data.get('user_id')  # Assuming you have user authentication
+    reply_content = data.get('reply_content')
+    
+    new_reply = Reply(
+        post_id=post_id,
+        id=user.id,
+        reply_content=reply_content,
+        reply_date=datetime.now()
+    )
+    
+    db.session.add(new_reply)
+    db.session.commit()
+    
+    return jsonify({"message": "Reply added successfully!"}), 201
 
 @app.route('/delete-post/<post_id>', methods=['DELETE'])
 def delete_post(post_id):
@@ -365,16 +461,31 @@ def bookmark_post():
 def get_bookmarks():
     user = current_user
     bookmarks = Bookmark.query.filter_by(id=user.id).join(Post).order_by(Post.post_date.desc()).all()
-    bookmarks_list = [
-        {
-            'post_id': bookmark.post.post_id,
-            'title': bookmark.post.post_title,
-            'description': bookmark.post.post_desc,
-            'date': bookmark.post.post_date.strftime('%Y-%m-%d'),
-            'name': bookmark.post.user.name
-        }
-        for bookmark in bookmarks
-    ]
+    bookmarks_list = []
+    
+    for bookmark in bookmarks:
+        post = bookmark.post
+        replies = Reply.query.filter_by(post_id=post.post_id).all()
+        replies_data = [
+            {
+                'reply_id': reply.reply_id,
+                'reply_content': reply.reply_content,
+                'reply_date': reply.reply_date,
+                'user_id': reply.id,
+                'reply_name': reply.user.name  # Assuming reply.user is a relationship to User model
+            }
+            for reply in replies
+        ]
+        
+        bookmarks_list.append({
+            'post_id': post.post_id,
+            'title': post.post_title,
+            'description': post.post_desc,
+            'date': post.post_date,
+            'name': post.user.name,  # Assuming post.user is a relationship to User model
+            'replies': replies_data
+        })
+    
     return jsonify(bookmarks_list)
 
 @app.route('/submit-feedback', methods=['POST'])

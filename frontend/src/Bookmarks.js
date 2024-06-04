@@ -5,6 +5,7 @@ import axios from './axios';
 const MyBookmarks = (props) => {
 
     const [bookmarks, setBookmarks] = useState([]);
+    const [showReplies, setShowReplies] = useState({});
 
     useEffect(() => {
         const fetchBookmarks = async () => {
@@ -29,7 +30,14 @@ const MyBookmarks = (props) => {
         } catch (error) {
             console.error('Error bookmarking post:', error);
         }
-    };    
+    };
+
+    const toggleReplies = (postId) => {
+        setShowReplies(prevState => ({
+            ...prevState,
+            [postId]: !prevState[postId], // Toggle the show/hide state
+        }));
+    };
 
     return (
         <div className="App">
@@ -54,6 +62,29 @@ const MyBookmarks = (props) => {
                         <div className='row'>
                             <div className='col'><p><strong>Posted by:</strong> {bookmark.name}</p></div>
                             <div className='col' align="right"><small>{bookmark.date}</small></div>
+                        </div>
+                        <hr/>
+                        <div className='row mb-3'>
+                            <div className='col'>
+                                <h6>Replies:</h6>
+                                {/* {bookmark.replies.map(bookmark => (
+                                    <div key={bookmark.reply_id} className='reply row'>
+                                        <div className='col-md-9'><strong>{bookmark.reply_name}</strong>  {bookmark.reply_content}</div>
+                                        <div className='col-md-3' align='right'><small>{bookmark.reply_date}</small></div>
+                                    </div>
+                                ))} */}
+                                {bookmark.replies.length > 0 &&
+                                    <button className='btn btn-link btn-sm' onClick={() => toggleReplies(bookmark.post_id)}>
+                                        {showReplies[bookmark.post_id] ? 'Hide Replies' : 'View Replies'}
+                                    </button>
+                                }
+                                {showReplies[bookmark.post_id] && bookmark.replies.map(bookmark => (
+                                    <div key={bookmark.reply_id} className='reply row'>
+                                    <div className='col-md-9'><strong>{bookmark.reply_name}:</strong>  {bookmark.reply_content}</div>
+                                    <div className='col-md-3' align='right'><small>{bookmark.reply_date}</small></div>
+                                </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 ))}
