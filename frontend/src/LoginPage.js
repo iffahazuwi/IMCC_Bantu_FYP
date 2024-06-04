@@ -25,6 +25,9 @@ const Login = (props) => {
 
     return (
         <div className="App">
+            <div className="mt-4" align="right">
+                    <Link to="/submit-mentor-feedback" className="link-btn">Submit Mentor Feedback</Link>
+            </div>
             <div className="auth-form-container">
             <h1 className="mt-2" align="center" >Log In</h1>
             <div className="p-3">
@@ -42,7 +45,7 @@ const Login = (props) => {
                 
                 </form>
                 <div className="mt-4" align="center">
-                    <Link to="/register" className="link-btn">Click here to Register new user account</Link>
+                    <Link to="/register" className="link-btn">Click here for Mentor Registration</Link>
                 </div>
             </div>
         </div>

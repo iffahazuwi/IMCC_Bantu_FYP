@@ -50,7 +50,7 @@ const Register = (props) => {
     return (
         <div className="App">
             <div className="auth-form-container">
-            <h1 className="mt-2" align="center" >Register New User</h1>
+            <h1 className="mt-2" align="center" >Mentor Registration</h1>
             <div className="p-3">
                 <form className="register-form">
 

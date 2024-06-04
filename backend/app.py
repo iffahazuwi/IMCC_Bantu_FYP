@@ -45,6 +45,7 @@ login_manager.init_app(app)
 def get_student_data():
     with app.app_context():
         students = Student.query.filter_by(is_mentor=True).with_entities(
+        Student.id,
         Student.name,
         Student.gender,
         Student.country,
@@ -53,7 +54,7 @@ def get_student_data():
         Student.language_2
     ).all()
 
-    student_df = pd.DataFrame(students, columns=['name', 'gender', 'country', 'school', 'language_1', 'language_2'])
+    student_df = pd.DataFrame(students, columns=['id', 'name', 'gender', 'country', 'school', 'language_1', 'language_2'])
     return student_df
 
 # Get the student data
@@ -80,7 +81,7 @@ def find_top_matches(input_data, encoded_data, df, n=3):
     top_matches = df.iloc[top_indices].copy()
     top_matches['Similarity'] = similarities[top_indices] * 100
     
-    return top_matches[['name', 'gender', 'country', 'school', 'language_1', 'language_2', 'Similarity']]
+    return top_matches[['id', 'name', 'gender', 'country', 'school', 'language_1', 'language_2', 'Similarity']]
 
 def admin_required(f):
     @wraps(f)
@@ -175,6 +176,8 @@ def update_user():
         return jsonify({"error": "Unknown user type"}), 400
     
 @app.route('/match', methods=['POST'])
+@login_required
+@admin_required
 def match():
     data = request.json
     input_data = [
@@ -198,7 +201,7 @@ def register_user():
     matric_no = request.json["matric_no"]
     phone_no = request.json["phone_no"]
     school = request.json["school"]
-    is_mentor = False
+    is_mentor = True
     type = "student"
     gender = request.json["gender"]
     country = request.json["country"]
@@ -441,6 +444,16 @@ def add_reply():
     
     return jsonify({"message": "Reply added successfully!"}), 201
 
+@app.route('/delete-reply/<reply_id>', methods=['DELETE'])
+def delete_reply(reply_id):
+    reply = Reply.query.get(reply_id)
+    if reply:
+        db.session.delete(reply)
+        db.session.commit()
+        return jsonify({'message': 'Reply deleted successfully!'}), 200
+    else:
+        return jsonify({'message': 'Reply not found!'}), 404
+
 @app.route('/delete-post/<post_id>', methods=['DELETE'])
 def delete_post(post_id):
     post = Post.query.filter_by(post_id=post_id).first()
@@ -527,6 +540,22 @@ def get_clients():
     clients = Student.query.filter_by(is_mentor=False).all()
     client_list = [{"id": client.id, "name": client.name, "matric_no": client.matric_no} for client in clients]
     return jsonify(client_list)
+
+@app.route('/get-client-details/<int:client_id>', methods=['GET'])
+@login_required
+@admin_required
+def get_client_details(client_id):
+    client = Student.query.filter_by(id=client_id, is_mentor=False).first()
+    if client:
+        client_details = {
+            "gender": client.gender,
+            "country": client.country,
+            "school": client.school,
+            "language_1": client.language_1,
+            "language_2": client.language_2
+        }
+        return jsonify(client_details)
+    return jsonify({"error": "Client not found"}), 404
 
 @app.route('/get-mentors', methods=['GET'])
 @login_required

@@ -123,7 +123,22 @@ export default function CommunityPage() {
         } catch (error) {
             console.error('Error bookmarking post:', error);
         }
-    };    
+    };
+
+    const deleteReply = async (replyId) => {
+        if (!window.confirm('Are you sure you want to delete this reply?')) {
+            return;
+        }
+        try {
+            await axios.delete(`http://localhost:5000/delete-reply/${replyId}`);
+            // Refresh posts to show the updated replies
+            const postsResponse = await axios.get('http://127.0.0.1:5000/get-posts');
+            setPosts(postsResponse.data);
+            alert('Reply deleted');
+        } catch (error) {
+            console.error('Error deleting reply:', error);
+        }
+    };
 
     return (
         <div className="App">
@@ -185,7 +200,8 @@ export default function CommunityPage() {
                                 {showReplies[post.post_id] && post.replies.map(reply => (
                                     <div key={reply.reply_id} className='reply row'>
                                     <div className='col-md-9'><strong>{reply.reply_name}:</strong>  {reply.reply_content}</div>
-                                    <div className='col-md-3' align='right'><small>{reply.reply_date}</small></div>
+                                    <div className='col-md-3' align='right'><small>{reply.reply_date}</small>
+                                    <button className="btn btn-outline-danger btn-sm ms-2" onClick={() => deleteReply(reply.reply_id)}>Del</button></div>
                                 </div>
                                 ))}
                             </div>
