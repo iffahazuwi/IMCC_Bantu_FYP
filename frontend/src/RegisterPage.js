@@ -36,8 +36,8 @@ const Register = (props) => {
         try {
             await axios.post("http://localhost:5000/register", data);
             alert("Your account has been registered!");
-
             navigate("/home");
+            window.location.reload();
         } catch (err) {
             if (err.response && err.response.status === 409) {
                 alert('User already exists! Please use your email and password to login.');

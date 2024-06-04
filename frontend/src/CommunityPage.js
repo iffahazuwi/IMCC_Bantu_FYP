@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import './App.css';
 import axios from './axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash, faStar as faStarFilled } from '@fortawesome/free-solid-svg-icons';
+import { faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 
 export default function CommunityPage() {
 
@@ -175,12 +178,14 @@ export default function CommunityPage() {
                                 {userType === 'student' && (<div>
                                 <div className=" mb-1" align="right">
                                 <button className="btn btn-warning btn-sm" onClick={() => bookmarkPost(post.post_id)}>
-                                    {bookmarkedPosts.some(b => b.post_id === post.post_id) ? 'Unsave' : 'Save'}
+                                    {bookmarkedPosts.some(b => b.post_id === post.post_id) ? <FontAwesomeIcon icon={faStarFilled}/> : <FontAwesomeIcon icon={faStarEmpty}/>}
                                 </button>
                                 </div></div>)}
                                 <div className=" mb-1" align="right">
                                     <button className="btn btn-danger btn-sm"
-                                    onClick={() => deletePost(post.post_id)}>Del</button>
+                                    onClick={() => deletePost(post.post_id)}>
+                                        <FontAwesomeIcon icon={faTrash} />
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -201,7 +206,9 @@ export default function CommunityPage() {
                                     <div key={reply.reply_id} className='reply row'>
                                     <div className='col-md-9'><strong>{reply.reply_name}:</strong>  {reply.reply_content}</div>
                                     <div className='col-md-3' align='right'><small>{reply.reply_date}</small>
-                                    <button className="btn btn-outline-danger btn-sm ms-2" onClick={() => deleteReply(reply.reply_id)}>Del</button></div>
+                                    <button className="btn btn-outline-danger btn-sm ms-2" onClick={() => deleteReply(reply.reply_id)}>
+                                        <FontAwesomeIcon icon={faTrash} />
+                                    </button></div>
                                 </div>
                                 ))}
                             </div>

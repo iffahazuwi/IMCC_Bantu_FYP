@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from './axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar as faStarFilled } from '@fortawesome/free-solid-svg-icons';
+import { faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 
 const MyBookmarks = (props) => {
 
@@ -54,7 +57,7 @@ const MyBookmarks = (props) => {
                             <div className='col-md-1 d-flex flex-column align-items-end'>
                                 <div className="mb-1" align="right">
                                     <button className="btn btn-warning btn-sm" onClick={() => bookmarkPost(bookmark.post_id)}>
-                                        {bookmarks.some(b => b.post_id === bookmark.post_id) ? 'Unsave' : 'Save'}
+                                        {bookmarks.some(b => b.post_id === bookmark.post_id) ? <FontAwesomeIcon icon={faStarFilled}/> : <FontAwesomeIcon icon={faStarEmpty}/>}
                                     </button>
                                 </div>
                             </div>
