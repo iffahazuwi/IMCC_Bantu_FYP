@@ -38,17 +38,35 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # Load the data from the Excel file
-file_path = 'C:\\Users\\USER\\IMCC_Bantu_FYP\\Helperss.xlsx'
-df = pd.read_excel(file_path)
+# file_path = 'C:\\Users\\USER\\IMCC_Bantu_FYP\\Helperss.xlsx'
+# df = pd.read_excel(file_path)
+
+# Query the Student table to get the data
+def get_student_data():
+    with app.app_context():
+        students = Student.query.filter_by(is_mentor=True).with_entities(
+        Student.name,
+        Student.gender,
+        Student.country,
+        Student.school,
+        Student.language_1,
+        Student.language_2
+    ).all()
+
+    student_df = pd.DataFrame(students, columns=['name', 'gender', 'country', 'school', 'language_1', 'language_2'])
+    return student_df
+
+# Get the student data
+student_df = get_student_data()
 
 # Select the columns to compare
-columns_to_compare = ['Country', 'Gender', 'School', 'Continent', 'Level', 'Language option 1', 'Language option 2', 'age_range']
+columns_to_compare = ['gender', 'country', 'school', 'language_1', 'language_2']
 
 # One-hot encode the selected columns with handle_unknown='ignore'
 encoder = OneHotEncoder(handle_unknown='ignore')
-encoded_data = encoder.fit_transform(df[columns_to_compare]).toarray()
+encoded_data = encoder.fit_transform(student_df[columns_to_compare]).toarray()
 
-def find_top_matches(input_data, encoded_data, df, n=5):
+def find_top_matches(input_data, encoded_data, df, n=3):
     # One-hot encode the input data
     input_encoded = encoder.transform([input_data]).toarray()
     
@@ -62,7 +80,7 @@ def find_top_matches(input_data, encoded_data, df, n=5):
     top_matches = df.iloc[top_indices].copy()
     top_matches['Similarity'] = similarities[top_indices] * 100
     
-    return top_matches[['Name', 'Country', 'Gender', 'School', 'Continent', 'Level', 'Language option 1', 'Language option 2', 'age_range', 'Similarity']]
+    return top_matches[['name', 'gender', 'country', 'school', 'language_1', 'language_2', 'Similarity']]
 
 def admin_required(f):
     @wraps(f)
@@ -160,17 +178,14 @@ def update_user():
 def match():
     data = request.json
     input_data = [
-        data['Country'],
-        data['Gender'],
-        data['School'],
-        data['Continent'],
-        data['Level'],
-        data['Language_option_1'],
-        data['Language_option_2'],
-        data['age_range']
+        data['gender'],
+        data['country'],
+        data['school'],
+        data['language_1'],
+        data['language_2']
     ]
 
-    top_matches = find_top_matches(input_data, encoded_data, df)
+    top_matches = find_top_matches(input_data, encoded_data, student_df)
     top_matches_list = top_matches.to_dict(orient='records')
 
     return jsonify(top_matches_list)
@@ -510,7 +525,7 @@ def submit_feedback():
 @admin_required
 def get_clients():
     clients = Student.query.filter_by(is_mentor=False).all()
-    client_list = [{"id": client.id, "name": client.name} for client in clients]
+    client_list = [{"id": client.id, "name": client.name, "matric_no": client.matric_no} for client in clients]
     return jsonify(client_list)
 
 @app.route('/get-mentors', methods=['GET'])

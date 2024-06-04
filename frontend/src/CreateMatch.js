@@ -58,7 +58,7 @@ const CreateMatch = (props) => {
             >
                 <option value="">Select a client</option>
                 {clients.map(client => (
-                    <option key={client.id} value={client.id}>{client.name}</option>
+                    <option key={client.id} value={client.id}>{client.name} ({client.matric_no})</option>
                 ))}
             </select>
             {/* <label htmlFor="mentor" className="form-label mt-2">Mentor Name</label>
