@@ -6,7 +6,6 @@ import { faStar as faStarFilled } from '@fortawesome/free-solid-svg-icons';
 import { faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
 
 const MyBookmarks = (props) => {
-
     const [bookmarks, setBookmarks] = useState([]);
     const [showReplies, setShowReplies] = useState({});
 
@@ -20,9 +19,8 @@ const MyBookmarks = (props) => {
                 console.error('Error fetching bookmarks:', error);
             }
         };
-    
         fetchBookmarks();
-    }, []);    
+    }, []);
 
     const bookmarkPost = async (postId) => {
         try {
@@ -38,69 +36,60 @@ const MyBookmarks = (props) => {
     const toggleReplies = (postId) => {
         setShowReplies(prevState => ({
             ...prevState,
-            [postId]: !prevState[postId], // Toggle the show/hide state
+            [postId]: !prevState[postId],
         }));
     };
 
     return (
         <div className="App">
-            <div className="feedback-form-container">
-            <h1 className="mb-2" align="left" >My Bookmark List</h1>
-            <div className='posts pt-1'>
+            <div className="text-center mb-5">
+                <h1>My Bookmark List</h1>
+            </div>
+            <div className="row">
                 {bookmarks.map((bookmark) => (
-                    <div key={bookmark.post_id} className='post mb-3 pt-3 ps-3 pe-3 border border-dark rounded'>
-                        <div className='row'>
-                            <div className='col-md-11'>
-                                <h2>{bookmark.title}</h2>
-                                <p>{bookmark.description}</p>
-                            </div>
-                            <div className='col-md-1 d-flex flex-column align-items-end'>
-                                <div className="mb-1" align="right">
+                    <div key={bookmark.post_id} className="col-md-6 mb-4">
+                        <div className="card">
+                            <div className="card-body">
+                                <div className="d-flex justify-content-between align-items-center">
+                                    <h5 className="card-title">{bookmark.title}</h5>
                                     <button className="btn btn-warning btn-sm" onClick={() => bookmarkPost(bookmark.post_id)}>
-                                        {bookmarks.some(b => b.post_id === bookmark.post_id) ? <FontAwesomeIcon icon={faStarFilled}/> : <FontAwesomeIcon icon={faStarEmpty}/>}
+                                        {bookmarks.some(b => b.post_id === bookmark.post_id) ? <FontAwesomeIcon icon={faStarFilled} /> : <FontAwesomeIcon icon={faStarEmpty} />}
                                     </button>
                                 </div>
-                            </div>
-                        </div>
-                        <div className='row'>
-                            <div className='col'><p><strong>Posted by:</strong> {bookmark.name}</p></div>
-                            <div className='col' align="right"><small>{bookmark.date}</small></div>
-                        </div>
-                        <hr/>
-                        <div className='row mb-3'>
-                            <div className='col'>
-                                <h6>Replies:</h6>
-                                {/* {bookmark.replies.map(bookmark => (
-                                    <div key={bookmark.reply_id} className='reply row'>
-                                        <div className='col-md-9'><strong>{bookmark.reply_name}</strong>  {bookmark.reply_content}</div>
-                                        <div className='col-md-3' align='right'><small>{bookmark.reply_date}</small></div>
-                                    </div>
-                                ))} */}
-                                {bookmark.replies.length > 0 &&
-                                    <button className='btn btn-link btn-sm' onClick={() => toggleReplies(bookmark.post_id)}>
-                                        {showReplies[bookmark.post_id] ? 'Hide Replies' : 'View Replies'}
-                                    </button>
-                                }
-                                {showReplies[bookmark.post_id] && bookmark.replies.map(bookmark => (
-                                    <div key={bookmark.reply_id} className='reply row'>
-                                    <div className='col-md-9'><strong>{bookmark.reply_name}:</strong>  {bookmark.reply_content}</div>
-                                    <div className='col-md-3' align='right'><small>{bookmark.reply_date}</small></div>
+                                <p className="card-text">{bookmark.description}</p>
+                                <div className="d-flex justify-content-between">
+                                    <p className="card-text"><small className="text-muted">Posted by: {bookmark.name}</small></p>
+                                    <p className="card-text"><small className="text-muted">{bookmark.date}</small></p>
                                 </div>
-                                ))}
+                                <hr />
+                                <div>
+                                    <h6>Replies:</h6>
+                                    {bookmark.replies.length > 0 && (
+                                        <button className="btn btn-link btn-sm" onClick={() => toggleReplies(bookmark.post_id)}>
+                                            {showReplies[bookmark.post_id] ? 'Hide Replies' : 'View Replies'}
+                                        </button>
+                                    )}
+                                    {showReplies[bookmark.post_id] && bookmark.replies.map(reply => (
+                                        <div key={reply.reply_id} className="card mb-2">
+                                            <div className="card-body">
+                                                <div className="d-flex justify-content-between">
+                                                    <div><strong>{reply.reply_name}:</strong> {reply.reply_content}</div>
+                                                    <small>{reply.reply_date}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
-            <div></div>
             <Link to="/community-page">
-                <button
-                    className='btn btn-secondary mb-3 ms-3 fixed-bottom'
-                >Back</button>
+                <button className="btn btn-secondary mb-3 ms-3 fixed-bottom">Back</button>
             </Link>
         </div>
-        </div>
-    )
+    );
 }
 
-export default MyBookmarks
+export default MyBookmarks;

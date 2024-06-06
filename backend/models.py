@@ -32,6 +32,7 @@ class Student(User):
     matric_no = db.Column(db.String(20), nullable=True)
     school = db.Column(db.String(345), nullable=True)
     is_mentor = db.Column(db.Boolean, default=False, nullable=False)
+    is_available = db.Column(db.Boolean, default=True, nullable=False)
     gender = db.Column(db.String(32), nullable=True)
     country = db.Column(db.String(32), nullable=True)
     language_1 = db.Column(db.String(32), nullable=True)
@@ -39,11 +40,12 @@ class Student(User):
 
     __mapper_args__ = {'polymorphic_identity': 'student'}
     def __init__(self, name, email, password, phone_no, matric_no, school, gender,  
-                 country, language_1, language_2, is_mentor=False):
+                 country, language_1, language_2, is_mentor=False, is_available=True):
         super().__init__(name, email, password, phone_no)
         self.matric_no = matric_no
         self.school = school
         self.is_mentor = is_mentor
+        self.is_available = is_available
         self.gender = gender
         self.country = country
         self.language_1 = language_1
@@ -60,11 +62,18 @@ class Admin(User):
 class Feedback(db.Model):
     __tablename__ = "feedbacks"
     feedback_id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
-    feedback_desc = db.Column(db.String(345), nullable=True)
+    fb_client = db.Column(db.String(32), nullable=False)
+    fb_mentor = db.Column(db.String(32), nullable=False)
+    fb_accessible = db.Column(db.Integer, nullable=False)
+    fb_interactions = db.Column(db.Integer, nullable=False)
+    fb_communication = db.Column(db.Integer, nullable=False)
+    fb_knowledgeable = db.Column(db.Integer, nullable=False)
+    fb_attitude = db.Column(db.Integer, nullable=False)
+    fb_friendly = db.Column(db.Integer, nullable=False)
+    fb_effort = db.Column(db.Integer, nullable=False)
+    feedback_overall = db.Column(db.Integer, nullable=False)
+    feedback_comment = db.Column(db.String(345), nullable=True)
     feedback_date = db.Column(db.DateTime, default=datetime.now)
-    id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-
-    user = db.relationship('User', backref=db.backref('feedbacks', lazy=True))
  
 class Application(db.Model):
     __tablename__ = "applications"
@@ -119,6 +128,16 @@ class Matching(db.Model):
     feedback_desc = db.Column(db.String(345), nullable=True)
     feedback_date = db.Column(db.DateTime)
     evaluation = db.Column(db.String(345), nullable=True)
+    matching_status = db.Column(db.String(32), nullable=True, default='Active')
+    
+    accessibility_rating = db.Column(db.Integer, nullable=True)
+    initiation_rating = db.Column(db.Integer, nullable=True)
+    communication_rating = db.Column(db.Integer, nullable=True)
+    knowledge_rating = db.Column(db.Integer, nullable=True)
+    behavior_rating = db.Column(db.Integer, nullable=True)
+    friendliness_rating = db.Column(db.Integer, nullable=True)
+    effort_rating = db.Column(db.Integer, nullable=True)
+    overall_rating = db.Column(db.Integer, nullable=True)
 
     client = db.relationship('User', foreign_keys=[client_id])
     mentor = db.relationship('User', foreign_keys=[mentor_id])

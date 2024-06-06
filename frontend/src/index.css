@@ -1,9 +1,11 @@
 * {
     box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
 }
 
 body {
     margin: 0;
+    font-family: 'Arial', sans-serif;
     /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
         'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
         sans-serif;
@@ -42,12 +44,12 @@ body {
 }
 
 .site-title-2 {
-    font-size: 2rem;
-    gap: 1rem;
-    padding: .5%;
-    margin: 0;
-    list-style: none;
     display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif; /* Add the font-family here */
 }
 
 .nav ul {

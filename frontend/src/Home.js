@@ -22,46 +22,33 @@ export default function Home() {
         fetchUserRole();
     }, []);
 
-    // document.addEventListener("DOMContentLoaded", function(){
-    //     var element = document.getElementById('background');
-    //     element.style.backgroundImage = "url(C:/Users/USER/IMCC_Bantu_FYP/frontend/public/1-37d4acdd.jpeg)";
-    //     element.style.backgroundSize = "cover";
-    //     element.style.backgroundPosition = "center";
-    //     element.style.backgroundRepeat = "no-repeat";
-    // })
-
     return (
         <div className="app-home">
-            <div className='col'>
-            <h1 className="mb-3 mt-3" align='center'>Home</h1>
-            <div className="p-4">
-                <h2 className="welcome-page" align='center'>
-                    {userType === 'student' && isMentor ? (
-                        <div>
-                            WELCOME TO IMCC BANTU!<br/>
-                            <h6>Congratulations! You have been selected as a mentor!
-                            Your registration as a mentor have been successful.<br/>
-                            You can access the system now.</h6>
-                        </div>
-                    ) : (
-                        <div>
-                            WELCOME TO IMCC BANTU!<br/>
-                            <h6>You can access the system now.</h6>
-                        </div>
-                    )}
-                    
-                    {/* IMCC Bantu: Match Made in Heaven is a system developed to help international students of USM
-                    to connect with volunteers among the USM students as the mentors. The aim of developing
-                    this system is to guide international students solving their problems and let them have
-                    a great experience studying in USM. */}
-                </h2>
-                <p align='center'>
-                    Visit
-                    <a className="ms-1 me-1" href="https://imcc.usm.my/" target="_blank">https://imcc.usm.my/</a>
-                    for more info!
-                </p>
+            <div className="container">
+                <h1 align='center'>Home</h1>
+                <div className="p-4">
+                    <h2 align='center'>
+                        {userType === 'student' && isMentor ? (
+                            <div>
+                                WELCOME TO IMCC BANTU!<br/>
+                                <h6>Congratulations! You have been selected as a mentor!
+                                Your registration as a mentor has been successful.<br/>
+                                You can access the system now.</h6>
+                            </div>
+                        ) : (
+                            <div>
+                                WELCOME TO IMCC BANTU!<br/>
+                                <h6>You can access the system now.</h6>
+                            </div>
+                        )}
+                    </h2>
+                    <p align='center'>
+                        Visit
+                        <a className="ms-1 me-1" href="https://imcc.usm.my/" target="_blank" rel="noopener noreferrer">https://imcc.usm.my/</a>
+                        for more info!
+                    </p>
+                </div>
             </div>
-        </div>
         </div>
     )
 }

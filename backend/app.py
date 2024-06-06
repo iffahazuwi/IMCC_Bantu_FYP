@@ -44,30 +44,33 @@ login_manager.init_app(app)
 # Query the Student table to get the data
 def get_student_data():
     with app.app_context():
-        students = Student.query.filter_by(is_mentor=True).with_entities(
+        students = Student.query.filter_by(is_mentor=True, is_available=True).with_entities(
         Student.id,
         Student.name,
+        Student.matric_no,
         Student.gender,
         Student.country,
         Student.school,
         Student.language_1,
         Student.language_2
     ).all()
+        
+    print("Retrieved Students:", students)
 
-    student_df = pd.DataFrame(students, columns=['id', 'name', 'gender', 'country', 'school', 'language_1', 'language_2'])
+    student_df = pd.DataFrame(students, columns=['id', 'name', 'matric_no', 'gender', 'country', 'school', 'language_1', 'language_2'])
     return student_df
 
-# Get the student data
-student_df = get_student_data()
+def find_top_matches(input_data, n=3):
+    # Get the student data
+    student_df = get_student_data()
 
-# Select the columns to compare
-columns_to_compare = ['gender', 'country', 'school', 'language_1', 'language_2']
+    # Select the columns to compare
+    columns_to_compare = ['gender', 'country', 'school', 'language_1', 'language_2']
 
-# One-hot encode the selected columns with handle_unknown='ignore'
-encoder = OneHotEncoder(handle_unknown='ignore')
-encoded_data = encoder.fit_transform(student_df[columns_to_compare]).toarray()
+    # One-hot encode the selected columns with handle_unknown='ignore'
+    encoder = OneHotEncoder(handle_unknown='ignore')
+    encoded_data = encoder.fit_transform(student_df[columns_to_compare]).toarray()
 
-def find_top_matches(input_data, encoded_data, df, n=3):
     # One-hot encode the input data
     input_encoded = encoder.transform([input_data]).toarray()
     
@@ -78,10 +81,10 @@ def find_top_matches(input_data, encoded_data, df, n=3):
     top_indices = np.argsort(similarities)[-n:][::-1]
     
     # Get the top n most similar people from the dataframe
-    top_matches = df.iloc[top_indices].copy()
+    top_matches = student_df.iloc[top_indices].copy()
     top_matches['Similarity'] = similarities[top_indices] * 100
     
-    return top_matches[['id', 'name', 'gender', 'country', 'school', 'language_1', 'language_2', 'Similarity']]
+    return top_matches[['id', 'name', 'matric_no', 'gender', 'country', 'school', 'language_1', 'language_2', 'Similarity']]
 
 def admin_required(f):
     @wraps(f)
@@ -188,7 +191,7 @@ def match():
         data['language_2']
     ]
 
-    top_matches = find_top_matches(input_data, encoded_data, student_df)
+    top_matches = find_top_matches(input_data)
     top_matches_list = top_matches.to_dict(orient='records')
 
     return jsonify(top_matches_list)
@@ -418,6 +421,7 @@ def get_posts():
             "description": post.post_desc,
             "date": post.post_date,
             "name": post.user.name,  # Assuming you have a relationship with the User model
+            "user_id": post.user.id,
             "replies": replies_data
         })
     return jsonify(posts_data)
@@ -524,20 +528,68 @@ def submit_feedback():
     feedback_desc = request.json["feedback_desc"]
     feedback_date = datetime.now()
 
+     # Extract ratings from the request
+    accessibility_rating = request.json["accessibility_rating"]
+    initiation_rating = request.json["initiation_rating"]
+    communication_rating = request.json["communication_rating"]
+    knowledge_rating = request.json["knowledge_rating"]
+    behavior_rating = request.json["behavior_rating"]
+    friendliness_rating = request.json["friendliness_rating"]
+    effort_rating = request.json["effort_rating"]
+    overall_rating = request.json["overall_rating"]
+
     matching = Matching.query.filter_by(client_id=user.id).first()
     if matching:
         matching.feedback_desc = feedback_desc
         matching.feedback_date = feedback_date
+        # Update ratings
+        matching.accessibility_rating = accessibility_rating
+        matching.initiation_rating = initiation_rating
+        matching.communication_rating = communication_rating
+        matching.knowledge_rating = knowledge_rating
+        matching.behavior_rating = behavior_rating
+        matching.friendliness_rating = friendliness_rating
+        matching.effort_rating = effort_rating
+        matching.overall_rating = overall_rating
         db.session.commit()
         return 'Feedback submitted successfully!'
     else:
         return 'Matching not found', 404
 
+@app.route('/submit-mentor-feedback', methods=['POST'])
+def submit_mentor_feedback():
+    user = current_user
+    
+    # Extracting feedback details from JSON request
+    feedback_details = request.json
+    
+    # Creating a new instance of Feedback model
+    new_feedback = Feedback(
+        fb_client=feedback_details["selectedClient"],
+        fb_mentor=feedback_details["selectedMentor"],
+        fb_accessible=feedback_details["ratings"]["accessibility"],
+        fb_interactions=feedback_details["ratings"]["initiation"],
+        fb_communication=feedback_details["ratings"]["communication"],
+        fb_knowledgeable=feedback_details["ratings"]["knowledge"],
+        fb_attitude=feedback_details["ratings"]["behavior"],
+        fb_friendly=feedback_details["ratings"]["friendliness"],
+        fb_effort=feedback_details["ratings"]["effort"],
+        feedback_overall=feedback_details["ratings"]["overall"],
+        feedback_comment=feedback_details["feedback_comment"],
+        matching_id=feedback_details["matching_id"]
+    )
+
+    # Saving the new feedback to the database
+    db.session.add(new_feedback)
+    db.session.commit()
+
+    return "Feedback submitted successfully", 200
+
 @app.route('/get-clients', methods=['GET'])
 @login_required
 @admin_required
 def get_clients():
-    clients = Student.query.filter_by(is_mentor=False).all()
+    clients = Student.query.filter_by(is_mentor=False, is_available=True).all()
     client_list = [{"id": client.id, "name": client.name, "matric_no": client.matric_no} for client in clients]
     return jsonify(client_list)
 
@@ -581,12 +633,55 @@ def insert_match():
         db.session.add(matching)
         db.session.commit()
 
+        client = aliased(Student)
+        mentor = aliased(Student)
+
+        db.session.query(Student).\
+            filter(Student.id == client_id).\
+            update({Student.is_available: False})
+        
+        db.session.query(Student).\
+            filter(Student.id == mentor_id).\
+            update({Student.is_available: False})
+
+        db.session.commit()
+
         return 'New match has been created successfully!', 201
     except Exception as e:
         print(f"Error: {e}")
         return str(e), 500
     
 from sqlalchemy.orm import aliased
+
+@app.route('/update-match-status/<matching_id>', methods=['POST'])
+@login_required
+@admin_required
+def update_match_status(matching_id):
+    try:
+        matching = Matching.query.filter_by(matching_id=matching_id).first()
+        if not matching:
+            return "Match not found", 404
+
+        new_status = request.json.get("status")
+        if new_status not in ['Active', 'Completed']:
+            return "Invalid status", 400
+
+        matching.matching_status = new_status
+        db.session.commit()
+
+        if new_status == 'Active':
+            matching.client.is_available = False
+            matching.mentor.is_available = False
+        elif new_status == 'Completed':
+            matching.client.is_available = True
+            matching.mentor.is_available = True
+        db.session.commit()
+
+        return "Match status updated successfully", 200
+    except Exception as e:
+        print(f"Error updating match status: {e}")
+        db.session.rollback()  # Rollback changes in case of error
+        return str(e), 500
 
 @app.route('/getMatches', methods=['GET'])
 @login_required
@@ -601,7 +696,9 @@ def get_matches():
         Mentor.name.label('mentor_name'),
         Mentor.matric_no.label('mentor_matric_no'),
         Matching.matching_date,
-        Matching.evaluation
+        Matching.evaluation,
+        Matching.matching_status,
+        Matching.overall_rating
     ).join(Client, Matching.client_id == Client.id).join(Mentor, Matching.mentor_id == Mentor.id
                                                          ).order_by(Matching.matching_date.desc()).all()
 
@@ -611,7 +708,9 @@ def get_matches():
                      "mentor_name": match.mentor_name,
                      "mentor_matric_no": match.mentor_matric_no,
                      "matching_date": match.matching_date.strftime('%Y-%m-%d %H:%M:%S'),
-                     "evaluation": match.evaluation} for match in matches]
+                     "evaluation": match.evaluation,
+                     "matching_status": match.matching_status,
+                     "overall_rating": match.overall_rating} for match in matches]
     return jsonify(matches_list)
 
 @app.route('/getMentorMatches', methods=['GET'])
@@ -680,14 +779,30 @@ def delete_match(matching_id):
 @login_required
 def get_feedback(matching_id):
     feedback = db.session.query(
+        Matching.accessibility_rating,
+        Matching.initiation_rating,
+        Matching.communication_rating,
+        Matching.knowledge_rating,
+        Matching.behavior_rating,
+        Matching.friendliness_rating,
+        Matching.effort_rating,
+        Matching.overall_rating,
         Matching.feedback_desc,
         Matching.feedback_date
     ).filter(Matching.matching_id == matching_id).first()
 
-    if feedback:
+    if feedback is not None:
         feedback_data = {
+            "accessibility_rating": feedback.accessibility_rating,
+            "initiation_rating": feedback.initiation_rating,
+            "communication_rating": feedback.communication_rating,
+            "knowledge_rating": feedback.knowledge_rating,
+            "behavior_rating": feedback.behavior_rating,
+            "friendliness_rating": feedback.friendliness_rating,
+            "effort_rating": feedback.effort_rating,
+            "overall_rating": feedback.overall_rating,
             "feedback_desc": feedback.feedback_desc,
-            "feedback_date": feedback.feedback_date.strftime('%Y-%m-%d')
+            "feedback_date": feedback.feedback_date
         }
         return jsonify(feedback_data)
     else:

@@ -113,7 +113,7 @@ const UserPage = () => {
                         )}
                         {!isEditing && (
                             <div className='mt-3' align='center'>
-                                <button className='btn btn-success' onClick={() => setIsEditing(true)}>Edit Profile</button>
+                                <button className='btn btn-link' onClick={() => setIsEditing(true)}>Edit Profile</button>
                             </div>
                         )}
                 </div>

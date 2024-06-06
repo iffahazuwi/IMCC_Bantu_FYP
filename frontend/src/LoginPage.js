@@ -26,7 +26,7 @@ const Login = (props) => {
     return (
         <div className="App">
             <div className="mt-4" align="right">
-                    <Link to="/submit-mentor-feedback" className="link-btn">Submit Mentor Feedback</Link>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdx7CIqp4sqOx4XE5o-x47-tGETkf3F6oHx1PXexMWZ77Phzw/viewform" target="_blank" rel="noopener noreferrer" className="link-btn">Submit Mentor Feedback</a>
             </div>
             <div className="auth-form-container">
             <h1 className="mt-2" align="center" >Log In</h1>
@@ -34,7 +34,7 @@ const Login = (props) => {
                 <form className="login-form" onSubmit={handleSubmit}>
             
                     <label className="mb-1" htmlFor="email">USM Email</label>
-                    <input  className="mb-2" value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Please enter your student email..." id="email" name="email" />
+                    <input  className="mb-2" value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Please enter your USM email..." id="email" name="email" />
             
                     <label className="mb-1" htmlFor="password">Password</label>
                     <input className="mb-2" value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Please enter your password..." id="password" name="password" />
