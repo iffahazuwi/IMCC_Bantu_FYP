@@ -152,7 +152,7 @@ export default function CommunityPage() {
     return (
         <div className="App">
             <div className='text-center mb-5'>
-                <h1>Community Page</h1>
+                <h1><strong>Community Platform</strong></h1>
             </div>
             {userType === 'student' && (
                 <div className='d-flex justify-content-between mb-4'>

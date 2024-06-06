@@ -60,7 +60,7 @@ const UserPage = () => {
     return (
         <div className="App">
             <div className='col mb-3' align='center'>
-                <h1>User Page</h1>
+                <h1><strong>User Profile</strong></h1>
             </div>
             <div>
                 <div className='row'>

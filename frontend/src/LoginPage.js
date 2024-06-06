@@ -28,6 +28,9 @@ const Login = (props) => {
             <div className="mt-4" align="right">
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSdx7CIqp4sqOx4XE5o-x47-tGETkf3F6oHx1PXexMWZ77Phzw/viewform" target="_blank" rel="noopener noreferrer" className="link-btn">Submit Mentor Feedback</a>
             </div>
+            {/* <div align="center">
+                <img src="./helping-hands.png" alt="" className="logo" />
+            </div> */}
             <div className="auth-form-container">
             <h1 className="mt-2" align="center" >Log In</h1>
             <div className="p-3">

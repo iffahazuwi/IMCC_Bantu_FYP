@@ -7,48 +7,101 @@
     padding-top: 1rem;
 }
 
-/* .app-home {
-    background-color: rgb(240, 222, 240);
-    min-height: 100vh;
-    color: black;
-    padding-right: 3rem;
-    padding-left: 3rem;
-    padding-top: 1rem;
-    text-align: center;
-} */
-
-/* .app-home {
-    background-image: url('C:/Users/USER/IMCC_Bantu_FYP/frontend/public/1-37d4acdd.jpeg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: white;
-} */
-
-.app-home {
-    /* background-image: url('C:/Users/USER/IMCC_Bantu_FYP/frontend/public/1520189167283.jpg'); */
-    background-color: rgb(240, 222, 240);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
 .container {
     background: rgba(0, 0, 0, 0.6);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* .app-home {
+    background-color: rgb(240, 222, 240);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+} */
+
+.app-home {
+    background-color: rgb(240, 222, 240);
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 6%;
+}
+
+.left-side {
+    flex: 2;
+    margin-right: 20px;
+}
+
+.right-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.welcome-section {
+    text-align: center;
+    max-width: 800px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: white;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.welcome-section h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.welcome-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.welcome-section h6 {
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+.welcome-section p {
+    margin-top: 20px;
+}
+
+.layout {
+    display: flex;
+    justify-content: space-between;
+}
+
+.container-home {
+    /* margin: 0 auto;
+    padding: 20px; */
+    max-width: 800px;
+    margin-right: 20px;
+    /* text-align: center; */
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+.container-home h1 {
+    text-align: center;
+}
+
+.container-home .p-4 {
+    padding: 20px;
 }
 
 h1 {
@@ -166,6 +219,17 @@ button {
     color: blue;
     background: none;
 }
+
+.link-imcc {
+    align-items: center;
+    color: #FFA500;
+    background: none;
+}
+
+.link-imcc:hover {
+    color: blue;
+}
+
 /* 
 input[type=text], select {
     width: 100%;
@@ -319,4 +383,58 @@ input[type=submit]:hover {
 /* Hover effect */
 .table-hover tbody tr:hover {
     background-color: rgba(0, 0, 0, 0.075); /* Adjust hover color as needed */
+}
+
+.logo {
+    width: 100px; /* Adjust width as needed */
+    height: auto; /* Maintain aspect ratio */
+    margin-bottom: 20px; /* Adjust margin as needed */
+}
+
+.dashboard {
+    width: 100%;
+}
+
+.dashboard-stats {
+    display: flex;
+    justify-content: space-between;
+}
+
+.dashboard-card {
+    background: #ffbf47;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    width: 100%;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    text-align: center;
+    flex: 1;
+    margin-right: 10px;
+}
+
+.dashboard-card:last-child {
+    margin-right: 0;
+}
+
+.dashboard-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-card h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.dashboard-card p {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.chart-container {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
 }

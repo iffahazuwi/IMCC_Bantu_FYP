@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_login import login_user, LoginManager, login_required, logout_user, current_user
+from sqlalchemy import func
 from sqlalchemy.orm import aliased
 from functools import wraps
 from models import Matching, Reply, Student, db, User, Feedback, Application, Post, Notification, Admin, Bookmark
@@ -807,51 +808,30 @@ def get_feedback(matching_id):
         return jsonify(feedback_data)
     else:
         return jsonify({"error": "No feedback found"}), 404
+    
+@app.route('/getMentorCount', methods=['GET'])
+@login_required
+def get_mentor_count():
+    mentor_count = Student.query.filter_by(is_mentor=True).count()
+    return jsonify({"mentor_count": mentor_count})
 
-# @app.route('/getMentorHistory', methods=['GET'])
-# @login_required
-# @admin_required
-# def get_matches():
-#     Client = aliased(Student)
-#     Mentor = aliased(Student)
+@app.route('/getMatchingStats', methods=['GET'])
+@login_required
+def get_matching_stats():
+    total_matches = db.session.query(Matching).count()
+    avg_rating = db.session.query(func.avg(Matching.overall_rating)).scalar() or 0.0
+    return jsonify({"total_matches": total_matches, "average_rating": avg_rating})
 
-#     matches = db.session.query(
-#         Matching.matching_id,
-#         Client.name.label('client_name'),
-#         Client.matric_no.label('client_matric_no'),
-#         Mentor.name.label('mentor_name'),
-#         Mentor.matric_no.label('mentor_matric_no'),
-#         Matching.matching_date
-#     ).join(Client, Matching.client_id == Client.id).join(Mentor, Matching.mentor_id == Mentor.id
-#                                                          ).order_by(Matching.matching_date.desc()).all()
+@app.route('/getMatchStatusDistribution', methods=['GET'])
+@login_required
+def get_match_status_distribution():
+    status_distribution = db.session.query(
+        Matching.matching_status,
+        func.count(Matching.matching_id).label('count')
+    ).group_by(Matching.matching_status).all()
 
-#     matches_list = [{"matching_id": match.matching_id, 
-#                      "client_name": match.client_name, 
-#                      "client_matric_no": match.client_matric_no,
-#                      "mentor_name": match.mentor_name,
-#                      "mentor_matric_no": match.mentor_matric_no,
-#                      "matching_date": match.matching_date.strftime('%Y-%m-%d %H:%M:%S')} for match in matches]
-#     return jsonify(matches_list)
-
-# @app.route('/getMentorMatchingHistory', methods=['GET'])
-# @login_required
-# def get_mentor_matching_history():
-#     user = current_user
-
-#     if not user.is_mentor:
-#         return jsonify({"error": "You are not a mentor!"}), 403
-
-#     matchings = Matching.query.filter_by(mentor_id=user.id).all()
-#     matching_list = [
-#         {
-#             'student_name': matching.user.name,
-#             'student_matric_no': matching.student.matric_no,
-#             'student_school': matching.student.school,
-#             'match_date': matching.match_date.strftime('%Y-%m-%d')
-#         } for matching in matchings
-#     ]
-
-#     return jsonify(matching_list), 200
+    data = [{"status": status.matching_status, "count": status.count} for status in status_distribution]
+    return jsonify(data)
 
 @app.route("/login", methods=["POST"])
 def login_user_route():

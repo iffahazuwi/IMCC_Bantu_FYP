@@ -36,9 +36,9 @@ export default function Navigation() {
         </nav>
     ) : (
         <nav className="nav-2">
-            <div className="site-title-2"><img src="./universiti-sains-malaysia-logo-AFF9957016-seeklogo.com.png" alt="" width={120} height={60}/></div>
+            <div className="site-title-2 pt-1 pb-1"><img src="./universiti-sains-malaysia-logo-AFF9957016-seeklogo.com.png" alt="" width={120} height={60}/></div>
             <div className="site-title-2">IMCC Bantu: Match Made in Heaven</div>
-            <div className="site-title-2"><img src="./Latest_IMCC-Logo-2017 (1).png" alt="" width={140} height={60}/></div>
+            <div className="site-title-2 pt-1 pb-1"><img src="./Latest_IMCC-Logo-2017 (1).png" alt="" width={140} height={60}/></div>
         </nav>
     );
 }
