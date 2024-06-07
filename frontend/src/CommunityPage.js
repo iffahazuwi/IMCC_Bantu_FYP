@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import './App.css';
 import axios from './axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faStar as faStarFilled } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faStar as faStarFilled } from '@fortawesome/free-solid-svg-icons';
 import { faStar as faStarEmpty } from '@fortawesome/free-regular-svg-icons';
+import EditPostModal from './EditPost';
 
 export default function CommunityPage() {
     const [posts, setPosts] = useState([]);
@@ -14,6 +15,8 @@ export default function CommunityPage() {
     const [isMentor, setIsMentor] = useState(false);
     const [replyContents, setReplyContents] = useState({});
     const [showReplies, setShowReplies] = useState({});
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [selectedPost, setSelectedPost] = useState(null);
 
     useEffect(() => {
         const fetchUserRole = async () => {
@@ -36,14 +39,7 @@ export default function CommunityPage() {
             }
         }; 
 
-        const fetchPosts = async () => {
-            try {
-                const response = await axios.get('http://127.0.0.1:5000/get-posts');
-                setPosts(response.data);
-            } catch (error) {
-                console.error('Error fetching posts:', error);
-            }
-        };
+        
 
         const fetchBookmarks = async () => {
             try {
@@ -59,6 +55,34 @@ export default function CommunityPage() {
         fetchBookmarks();
         fetchUserId();
     }, []);
+
+    const fetchPosts = async () => {
+        try {
+            const response = await axios.get('http://127.0.0.1:5000/get-posts');
+            setPosts(response.data);
+        } catch (error) {
+            console.error('Error fetching posts:', error);
+        }
+    };
+
+    const handleEditPost = (post) => {
+        setSelectedPost(post);
+        setShowEditModal(true);
+    };
+
+    const handleSaveChanges = async (updatedPost) => {
+        try {
+            console.log('Updating post:', updatedPost); // Check if the function is being called and the updatedPost is correct
+
+            const response = await axios.put(`http://localhost:5000/update-post/${updatedPost.post_id}`, updatedPost, {withCredentials: true});
+            setShowEditModal(false);
+            alert('Post successfully updated!');
+            fetchPosts();
+            // window.location.reload();
+        } catch (error) {
+            console.error('Error updating post:', error);
+        }
+    };
 
     const handleReplyChange = (event, postId) => {
         const { value } = event.target;
@@ -165,6 +189,13 @@ export default function CommunityPage() {
                 </div>
             )}
             <div className='row'>
+            {selectedPost && showEditModal && (
+    <EditPostModal
+        post={selectedPost}
+        onSave={handleSaveChanges}
+        onHide={() => setShowEditModal(false)}
+    />
+)}
                 {posts.map((post) => (
                     <div key={post.post_id} className='col-md-6 mb-4'>
                         <div className='card'>
@@ -209,7 +240,7 @@ export default function CommunityPage() {
                                     ))}
                                 </div>
                                 {userType === 'student' && (
-                                    <div className='mt-3'>
+                                    <div className='mt-3 d-flex'>
                                         <input
                                             type='text'
                                             className="form-control"
@@ -217,10 +248,15 @@ export default function CommunityPage() {
                                             value={replyContents[post.post_id] || ''}
                                             onChange={(event) => handleReplyChange(event, post.post_id)}
                                         />
-                                        <button className="btn btn-primary btn-sm mt-2" onClick={() => submitReply(post.post_id)}>Reply</button>
+                                        <button className="btn btn-outline-primary btn-sm mt-2 ms-2" onClick={() => submitReply(post.post_id)}>Reply</button>
                                     </div>
                                 )}
                                 <div className='d-flex justify-content-end'>
+                                    {(userType === 'student' && post.user_id === userId) && (
+                                        <button className="btn btn-primary btn-sm mt-2 me-1" onClick={() => handleEditPost(post)}>
+                                            <FontAwesomeIcon icon={faEdit} className="me-1" />Edit Post
+                                        </button>
+                                    )}
                                     {(userType === 'admin' || (userType === 'student' && post.user_id === userId)) && (
                                         <button className="btn btn-danger btn-sm mt-2" onClick={() => deletePost(post.post_id)}>
                                             <FontAwesomeIcon icon={faTrash} /> Delete Post

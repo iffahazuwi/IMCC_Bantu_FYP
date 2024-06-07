@@ -427,6 +427,31 @@ def get_posts():
         })
     return jsonify(posts_data)
 
+# routes.py or app.py (wherever you define your routes)
+@app.route('/get-post/<post_id>', methods=['GET'])
+def get_post(post_id):
+    post = Post.query.get(post_id)
+    if not post:
+        return jsonify({'error': 'Post not found'}), 404
+    return jsonify({
+        'post_title': post.post_title,
+        'post_desc': post.post_desc
+    }), 200
+
+# routes.py or app.py (wherever you define your routes)
+@app.route('/update-post/<post_id>', methods=['PUT'])
+def update_post(post_id):
+    data = request.get_json()
+    post = Post.query.get(post_id)
+    if not post:
+        return jsonify({'error': 'Post not found'}), 404
+    
+    post.post_title = data.get('title', post.post_title)
+    post.post_desc = data.get('description', post.post_desc)
+    db.session.commit()
+
+    return jsonify({'message': 'Post updated successfully'}), 200
+
 @app.route('/add-reply', methods=['POST'])
 @login_required
 def add_reply():

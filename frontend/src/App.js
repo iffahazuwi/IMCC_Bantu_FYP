@@ -17,6 +17,7 @@ import CreateMatch from "./CreateMatch";
 import MentorFeedback from "./MentorFeedback";
 import RequestForm from "./RequestForm";
 import SubmitMentorFeedback from "./SubmitMentorFeedback";
+import EditPost from "./EditPost";
 
 const App = () => {
 
@@ -41,6 +42,7 @@ const App = () => {
                     <Route path="/matching-page/mentor-feedback" element={<MentorFeedback />} />
                     <Route path="/matching-page/request-mentor" element={<RequestForm />} />
                     <Route path="/submit-mentor-feedback" element={<SubmitMentorFeedback />} />
+                    <Route path="/community-page/edit-post/:postId" element={<EditPost />} />
                 </Routes>
             </BrowserRouter>
         </>
