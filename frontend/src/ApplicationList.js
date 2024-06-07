@@ -110,8 +110,9 @@ export default function ApplicationList() {
                 <Modal.Body>
                     <p><strong>Gender:</strong> {selectedApplication.app_gender}</p>
                     <p><strong>Country:</strong> {selectedApplication.app_country}</p>
-                    <p><strong>Language:</strong> {selectedApplication.app_language}</p>
-                    {/* <p><strong>Skill:</strong> {selectedApplication.app_skill}</p> */}
+                    <p><strong>Language:</strong> {selectedApplication.app_language}, {selectedApplication.app_language_2}</p>
+                    <p><strong>Skill:</strong> {selectedApplication.app_skill}</p>
+                    <p><strong>Certificate:</strong> <a href={`http://localhost:5000/uploads/${selectedApplication.app_filedata}`} target="_blank" rel="noopener noreferrer">{selectedApplication.app_filename}</a></p>
                     <p><strong>Date:</strong> {selectedApplication.app_date}</p>
                 </Modal.Body>
                 <Modal.Footer>

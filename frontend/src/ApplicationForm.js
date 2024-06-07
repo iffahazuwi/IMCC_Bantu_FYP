@@ -9,6 +9,7 @@ const ApplicationForm = (props) => {
     const [app_gender, setGender] = useState("");
     const [app_country, setCountry] = useState("");
     const [app_language, setLanguage] = useState("");
+    const [app_language_2, setLanguage2] = useState("");
     const [app_skill, setSkill] = useState("");
     const [file, setFile] = useState(null);
 
@@ -23,6 +24,7 @@ const ApplicationForm = (props) => {
         formData.append('app_gender', app_gender);
         formData.append('app_country', app_country);
         formData.append('app_language', app_language);
+        formData.append('app_language_2', app_language_2);
         formData.append('app_skill', app_skill);
         formData.append('file', file);
 
@@ -52,13 +54,13 @@ const ApplicationForm = (props) => {
 
             <div className="mt-2">
                 <label htmlFor="app_gender" className="form-label">Gender</label>
-                    {/* <input type="text"
+                    <input type="text"
                         value={app_gender}
                         className="form-control"
-                        placeholder="Please enter your gender..."
+                        placeholder="State you gender"
                         onChange={(e) => setGender(e.target.value)}
-                    /> */}
-                    <select
+                    />
+                    {/* <select
                     className="form-select"
                     value={app_gender}
                     onChange={(e) => setGender(e.target.value)}
@@ -66,10 +68,16 @@ const ApplicationForm = (props) => {
                     <option value="">Select Gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
-                </select>
+                </select> */}
                 
                 <label htmlFor="app_country" className="form-label mt-3">Origin Country</label>
-                <select
+                <input type="text"
+                        value={app_country}
+                        className="form-control"
+                        placeholder="State you origin country"
+                        onChange={(e) => setCountry(e.target.value)}
+                    />
+                {/* <select
                     className="form-select"
                     value={app_country}
                     onChange={(e) => setGender(e.target.value)}
@@ -119,10 +127,16 @@ const ApplicationForm = (props) => {
                     <option value="Tanzania">Tanzania</option>
                     <option value="Ghana">Ghana</option>
                     <option value="Bahrain">Bahrain</option>
-                </select>
+                </select> */}
                 
                 <label htmlFor="app_language" className="form-label mt-3">Language 1</label>
-                <select
+                <input type="text"
+                        value={app_language}
+                        className="form-control"
+                        placeholder="State you first language"
+                        onChange={(e) => setLanguage(e.target.value)}
+                    />
+                {/* <select
                     className="form-select"
                     value={app_language}
                     onChange={(e) => setGender(e.target.value)}
@@ -154,12 +168,18 @@ const ApplicationForm = (props) => {
                     <option value="Ndebele">Ndebele</option>
                     <option value="French">French</option>
                     <option value="Tamil">Tamil</option>
-                </select>
+                </select> */}
 
-<               label htmlFor="app_skill" className="form-label mt-3">Language 2</label>
-<select
+                <label htmlFor="app_language_2" className="form-label mt-3">Language 2</label>
+                <input type="text"
+                        value={app_language_2}
+                        className="form-control"
+                        placeholder="State you second language"
+                        onChange={(e) => setLanguage2(e.target.value)}
+                    />
+{/* <select
                     className="form-select"
-                    value={app_skill}
+                    value={app_language_2}
                     onChange={(e) => setGender(e.target.value)}
                 >
                     <option value="">Select Second Preffered Language</option>
@@ -189,12 +209,20 @@ const ApplicationForm = (props) => {
                     <option value="Ndebele">Ndebele</option>
                     <option value="French">French</option>
                     <option value="Tamil">Tamil</option>
-                </select>
+                </select> */}
 
-                {/* <label htmlFor="file" className="form-label mt-3">Upload your certificate here:</label>
+                <label htmlFor="app_skill" className="form-label mt-3">Skill(s)</label>
+                    <input type="text"
+                        value={app_skill}
+                        className="form-control"
+                        placeholder="State the skills you are capable of"
+                        onChange={(e) => setSkill(e.target.value)}
+                    />
+
+                <label htmlFor="file" className="form-label mt-3">Upload your certificate here:</label>
                     <div className="mb-2">
                         <input className="ml-3" type="file" onChange={handleFileChange}></input>
-                    </div> */}
+                    </div>
                     
             </div>
 

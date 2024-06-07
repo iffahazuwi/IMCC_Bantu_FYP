@@ -271,6 +271,7 @@ def submit_application():
     app_gender = request.form.get("app_gender")
     app_country = request.form.get("app_country")
     app_language = request.form.get("app_language")
+    app_language_2 = request.form.get("app_language_2")
     app_skill = request.form.get("app_skill")
     app_date = datetime.now()
     file = request.files['file']
@@ -288,7 +289,8 @@ def submit_application():
         file.save(file_path)
 
         application = Application(id=user.id, app_gender=app_gender, app_country=app_country, 
-                                  app_language=app_language, app_skill=app_skill, app_filename=filename, 
+                                  app_language=app_language, app_language_2=app_language_2, 
+                                  app_skill=app_skill, app_filename=filename, 
                                   app_filedata=file_path, app_date=app_date)
         db.session.add(application)
         db.session.commit()
@@ -312,6 +314,7 @@ def get_applications():
                 "app_gender": app.app_gender,
                 "app_country": app.app_country,
                 "app_language": app.app_language,
+                "app_language_2": app.app_language_2,
                 "app_skill": app.app_skill,
                 "app_filename": app.app_filename,
                 'app_filedata': base64.b64encode(app.app_filedata).decode('utf-8'),

@@ -81,6 +81,7 @@ class Application(db.Model):
     app_gender = db.Column(db.String(345), nullable=True)
     app_country = db.Column(db.String(345), nullable=True)
     app_language = db.Column(db.String(345), nullable=True)
+    app_language_2 = db.Column(db.String(345), nullable=True)
     app_skill = db.Column(db.String(345), nullable=True)
     app_filename = db.Column(db.String(345), nullable=False)
     app_filedata = db.Column(db.String(345), nullable=False)
