@@ -18,6 +18,7 @@ import MentorFeedback from "./MentorFeedback";
 import RequestForm from "./RequestForm";
 import SubmitMentorFeedback from "./SubmitMentorFeedback";
 import EditPost from "./EditPost";
+import MentorManagement from "./MentorManagement";
 
 const App = () => {
 
@@ -34,7 +35,7 @@ const App = () => {
                     <Route path="/user-page" element={<UserPage />} />
                     <Route path="/matching-page/feedback-form" element={<FeedbackForm />} />
                     <Route path="/user-page/application-form" element={<ApplicationForm />} />
-                    <Route path="/user-page/application-list" element={<ApplicationList />} />
+                    <Route path="/user-page/mentor-management" element={<MentorManagement />} />
                     <Route path="/user-page/notifications" element={<Notifications />} />
                     <Route path="/community-page/bookmarks" element={<MyBookmarks />} />
                     <Route path="/community-page/create-post" element={<CreatePost />} />
@@ -43,6 +44,8 @@ const App = () => {
                     <Route path="/matching-page/request-mentor" element={<RequestForm />} />
                     <Route path="/submit-mentor-feedback" element={<SubmitMentorFeedback />} />
                     <Route path="/community-page/edit-post/:postId" element={<EditPost />} />
+                    <Route path="/user-page/application-list" component={ApplicationList} />
+                    <Route path="/user-page/mentor-management" component={MentorManagement} />
                 </Routes>
             </BrowserRouter>
         </>

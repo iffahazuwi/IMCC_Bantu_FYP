@@ -72,12 +72,12 @@ const UserPage = () => {
                             >Mentor Application Form</button>
                             </Link>
                         )}
-                    </div>) : (<div className="mb-4 col" align='left'>
-                        <Link to="/user-page/application-list">
-                            <button
-                                className='btn btn-success'
-                            >View Mentor Application</button>
+                    </div>) : (<div className="mb-4 row" align='left'>
+                        <div className='col'>
+                        <Link to="/user-page/mentor-management">
+                            <button className='btn btn-link'>Mentor Management</button>
                         </Link>
+                        </div>
                     </div>)}
                     
                     {/* <div className="mb-4 col" align='right'>
@@ -113,7 +113,7 @@ const UserPage = () => {
                         )}
                         {!isEditing && (
                             <div className='mt-3' align='center'>
-                                <button className='btn btn-link' onClick={() => setIsEditing(true)}>Edit Profile</button>
+                                <button className='btn btn-success' onClick={() => setIsEditing(true)}>Edit Profile</button>
                             </div>
                         )}
                 </div>

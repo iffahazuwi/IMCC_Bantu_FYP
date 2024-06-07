@@ -640,7 +640,17 @@ def get_client_details(client_id):
 @admin_required
 def get_mentors():
     mentors = Student.query.filter_by(is_mentor=True).all()
-    mentor_list = [{"id": mentor.id, "name": mentor.name} for mentor in mentors]
+    mentor_list = [{"id": mentor.id, 
+                    "name": mentor.name,
+                    "matric_no": mentor.matric_no,
+                    "school": mentor.school, 
+                    "email": mentor.email,
+                    "phone_no": mentor.phone_no,
+                    "gender": mentor.gender,
+                    "country": mentor.country, 
+                    "language_1": mentor.language_1,
+                    "language_2": mentor.language_2
+                    } for mentor in mentors]
     return jsonify(mentor_list)
 
 @app.route('/insert-match', methods=['POST'])

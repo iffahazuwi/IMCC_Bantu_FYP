@@ -17,7 +17,7 @@ const EditProfile = ({ userData, onSave, onCancel }) => {
         try {
             const response = await axios.put(`http://localhost:5000/updateUser`, formData, { withCredentials: true });
             onSave(response.data);
-            alert("Post created successfully!")
+            alert("Profile updated successfully!")
         } catch (error) {
             console.error("Error updating user profile:", error);
         }
