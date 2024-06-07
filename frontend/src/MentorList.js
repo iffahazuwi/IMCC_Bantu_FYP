@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from "react-router-dom";
 import axios from './axios';
-import { Table, Button } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
 
-const MentorList = () => {
+const MentorList = ({ refresh }) => {
     const [mentors, setMentors] = useState([]);
 
     useEffect(() => {
@@ -16,11 +15,11 @@ const MentorList = () => {
             }
         };
         fetchMentors();
-    }, []);
+    }, [refresh]); // Re-fetch mentors when 'refresh' changes
 
     return (
         <div>
-            <h2 className='my-4'>List of Registered Mentors</h2>
+            <h2 className='my-4'>Mentor List</h2>
             <Table striped bordered hover>
                 <thead>
                     <tr>
@@ -33,6 +32,7 @@ const MentorList = () => {
                         <th>Gender</th>
                         <th>Country</th>
                         <th>Languages</th>
+                        <th>Accumulated Points</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -47,15 +47,13 @@ const MentorList = () => {
                             <td>{mentor.gender}</td>
                             <td>{mentor.country}</td>
                             <td>{mentor.language_1}, {mentor.language_2}</td>
+                            <td>{mentor.acc_points}</td>
                         </tr>
                     ))}
                 </tbody>
             </Table>
-            <Link to="/user-page">
-                <Button className='btn-secondary mb-3 ms-3 fixed-bottom'>Back</Button>
-            </Link>
         </div>
     );
-}
+};
 
 export default MentorList;

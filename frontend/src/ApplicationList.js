@@ -99,9 +99,9 @@ export default function ApplicationList() {
                 </tbody>
             </Table>
 
-            <Link to="/user-page">
+            {/* <Link to="/user-page">
                 <Button className='btn-secondary mb-3 ms-3 fixed-bottom'>Back</Button>
-            </Link>
+            </Link> */}
 
             <Modal show={showModal} onHide={handleClose}>
                 <Modal.Header closeButton>

@@ -37,10 +37,11 @@ class Student(User):
     country = db.Column(db.String(32), nullable=True)
     language_1 = db.Column(db.String(32), nullable=True)
     language_2 = db.Column(db.String(32), nullable=True)
+    acc_points = db.Column(db.Integer, nullable=True)
 
     __mapper_args__ = {'polymorphic_identity': 'student'}
     def __init__(self, name, email, password, phone_no, matric_no, school, gender,  
-                 country, language_1, language_2, is_mentor=False, is_available=True):
+                 country, language_1, language_2, acc_points, is_mentor=False, is_available=True):
         super().__init__(name, email, password, phone_no)
         self.matric_no = matric_no
         self.school = school
@@ -50,6 +51,14 @@ class Student(User):
         self.country = country
         self.language_1 = language_1
         self.language_2 = language_2
+        self.acc_points = acc_points
+
+    def update_acc_points(self, operation, amount):
+        if operation == 'add':
+            self.acc_points += amount
+        elif operation == 'subtract':
+            self.acc_points -= amount
+        db.session.commit()
 
 class Admin(User):
     __tablename__ = 'admins'

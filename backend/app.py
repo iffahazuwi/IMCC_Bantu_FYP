@@ -179,6 +179,19 @@ def update_user():
     else:
         return jsonify({"error": "Unknown user type"}), 400
     
+@app.route('/update-reward-points', methods=['POST'])
+def update_reward_points():
+    data = request.json
+    student_id = data.get('student_id')
+    operation = data.get('operation')
+    amount = data.get('amount')
+
+    student = Student.query.get(student_id)
+    if student:
+        student.update_acc_points(operation, amount)
+        return jsonify({'message': 'Points updated successfully'}), 200
+    return jsonify({'message': 'Student not found'}), 404
+    
 @app.route('/match', methods=['POST'])
 @login_required
 @admin_required
@@ -652,7 +665,8 @@ def get_mentors():
                     "gender": mentor.gender,
                     "country": mentor.country, 
                     "language_1": mentor.language_1,
-                    "language_2": mentor.language_2
+                    "language_2": mentor.language_2,
+                    "acc_points": mentor.acc_points
                     } for mentor in mentors]
     return jsonify(mentor_list)
 
