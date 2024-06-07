@@ -68,7 +68,7 @@ const UserPage = () => {
                         {userData && !userData.is_mentor && (
                             <Link to="/user-page/application-form">
                             <button
-                                className='btn btn-success'
+                                className='btn btn-link'
                             >Mentor Application Form</button>
                             </Link>
                         )}

@@ -762,6 +762,7 @@ def get_mentor_matches():
         Client.matric_no.label('client_matric_no'),
         Client.phone_no.label('client_phone_no'),
         Client.email.label('client_email'),
+        Matching.overall_rating,
         Matching.matching_date
     ).join(Client, Matching.client_id == Client.id).join(Mentor, Matching.mentor_id == Mentor.id
                                                          ).filter(Mentor.id == current_user.id
@@ -772,6 +773,7 @@ def get_mentor_matches():
                      "client_matric_no": match.client_matric_no,
                      "client_phone_no": match.client_phone_no,
                      "client_email": match.client_email,
+                     "overall_rating": match.overall_rating,
                      "matching_date": match.matching_date.strftime('%Y-%m-%d %H:%M:%S')} for match in matches]
     return jsonify(matches_list)
 

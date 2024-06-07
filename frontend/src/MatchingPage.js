@@ -72,7 +72,7 @@ export default function MatchingPage() {
             const allNullValues = Object.values(responseData).every(value => value === null);
     
             if (allNullValues) {
-                alert('No match found for this matching.');
+                alert('No feedback submitted for this matching.');
             } else {
                 setFeedback(responseData);
                 setModalTitle(`Feedback Submitted`);
