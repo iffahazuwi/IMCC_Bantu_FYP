@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_login import login_user, LoginManager, login_required, logout_user, current_user
+from flask_mail import Mail, Message
 from sqlalchemy import func
 from sqlalchemy.orm import aliased
 from functools import wraps
@@ -25,6 +26,16 @@ UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = 'C:\\Users\\USER\\IMCC_Bantu_FYP\\uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+# Flask-Mail configuration
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'iffah.imccbantufyp@gmail.com'
+app.config['MAIL_PASSWORD'] = 'qudnblafgvrruvok'
+app.config['MAIL_DEFAULT_SENDER'] = 'iffah.imccbantufyp@gmail.com'
+
+mail = Mail(app)
+
 bcrypt = Bcrypt(app)
 CORS(app, origins="http://localhost:3000", supports_credentials=True)
 server_session = Session(app)
@@ -43,6 +54,21 @@ login_manager.init_app(app)
 # df = pd.read_excel(file_path)
 
 # Query the Student table to get the data
+
+def send_match_email(client_email, mentor_details):
+    with app.app_context():
+        msg = Message(
+            subject='Your Mentor Match Details',
+            recipients=[client_email]
+        )
+        msg.body = f"""You have been matched with a mentor. Here are the details:
+        Name: {mentor_details['name']}
+        School: {mentor_details['school']}
+        Phone No.: {mentor_details['phone']}
+        Email: {mentor_details['email']}
+        """
+        mail.send(msg)
+
 def get_student_data():
     with app.app_context():
         students = Student.query.filter_by(is_mentor=True, is_available=True).with_entities(
@@ -698,6 +724,21 @@ def insert_match():
             update({Student.is_available: False})
 
         db.session.commit()
+
+        # Fetch mentor details
+        mentor_details = db.session.query(Student).filter(Student.id == mentor_id).first()
+        client_details = db.session.query(Student).filter(Student.id == client_id).first()
+
+        if mentor_details and client_details:
+            mentor_info = {
+                'name': mentor_details.name,
+                'school': mentor_details.school,
+                'phone': mentor_details.phone_no,
+                'email': mentor_details.email
+            }
+
+            # Send email to the client
+            send_match_email(client_details.email, mentor_info)
 
         return 'New match has been created successfully!', 201
     except Exception as e:
