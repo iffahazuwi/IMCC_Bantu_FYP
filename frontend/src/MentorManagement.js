@@ -19,9 +19,9 @@ const MentorManagement = () => {
                 <Tab eventKey="registered-mentors" title="List of Registered Mentors">
                     <MentorList refresh={refreshMentorList} />
                 </Tab>
-                <Tab eventKey="rewards-management" title="Rewards Management">
+                {/* <Tab eventKey="rewards-management" title="Rewards Management">
                     <RewardsManagement onPointsUpdated={handlePointsUpdated} />
-                </Tab>
+                </Tab> */}
                 <Tab eventKey="mentor-applications" title="Mentor Application List">
                     <ApplicationList />
                 </Tab>

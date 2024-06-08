@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from './axios';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,6 +18,11 @@ export default function MatchingPage() {
     const [selectedMatch, setSelectedMatch] = useState({});
     const [newEvaluation, setNewEvaluation] = useState('');
     const [statusFilter, setStatusFilter] = useState('All');
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [detailsModalTitle, setDetailsModalTitle] = useState('');
+    const [detailsModalData, setDetailsModalData] = useState({});
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchData();
@@ -173,6 +178,36 @@ export default function MatchingPage() {
         }
     };
 
+    const checkFeedbackSubmission = async (matchingId) => {
+        try {
+            const response = await axios.get(`http://localhost:5000/getFeedback/${matchingId}`, { withCredentials: true });
+            const responseData = response.data;
+            const allNullValues = Object.values(responseData).every(value => value === null);
+            return !allNullValues; // Return true if feedback has been submitted, false otherwise
+        } catch (error) {
+            console.error('Error checking feedback submission:', error);
+            alert('Error checking feedback submission. Please try again.');
+            return false;
+        }
+    };
+
+    const handleFeedbackButtonClick = async () => {
+        if (await checkFeedbackSubmission(matchingId)) {
+            alert('Feedback has been submitted for this matching.');
+        } else {
+            navigate("/matching-page/feedback-form");
+        }
+    };
+
+    const handleNameClick = (role, name, school, phone, email) => {
+        setDetailsModalTitle(`${role} Details`);
+        setDetailsModalData({ name, school, phone, email });
+        setShowDetailsModal(true);
+    };
+    
+    const handleDetailsModalClose = () => setShowDetailsModal(false);
+    
+
     return (
         <div className="App">
             <div className='col mb-3' align='center'>
@@ -204,13 +239,21 @@ export default function MatchingPage() {
                                         <h4>
                                             <div className='row'>
                                                 <div className='col-md-3'><strong>Client Phone No.</strong></div>
-                                                <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{matchDetails.client_phone_no}</span></div>
+                                                <div className='col-md-9'><strong>: </strong>
+                                                    <span style={{ marginLeft: '10px' }}>
+                                                        <a href={`tel:${matchDetails.client_phone_no}`}>{matchDetails.client_phone_no}</a>
+                                                    </span>
+                                                </div>
                                             </div>
                                         </h4>
                                         <h4>
                                             <div className='row'>
                                                 <div className='col-md-3'><strong>Client Email Address</strong></div>
-                                                <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{matchDetails.client_email}</span></div>
+                                                <div className='col-md-9'><strong>: </strong>
+                                                    <span style={{ marginLeft: '10px' }}>
+                                                        <a href={`mailto:${matchDetails.client_email}`}>{matchDetails.client_email}</a>
+                                                    </span>
+                                                </div>
                                             </div>
                                         </h4>
                                     </div><hr/>
@@ -237,21 +280,28 @@ export default function MatchingPage() {
                                         <h4>
                                             <div className='row'>
                                                 <div className='col-md-3'><strong>Mentor Phone No.</strong></div>
-                                                <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{matchDetails.mentor_phone_no}</span></div>
+                                                <div className='col-md-9'><strong>: </strong>
+                                                    <span style={{ marginLeft: '10px' }}>
+                                                        <a href={`tel:${matchDetails.mentor_phone_no}`}>{matchDetails.mentor_phone_no}</a>
+                                                    </span>
+                                                </div>
                                             </div>
                                         </h4>
                                         <h4>
                                             <div className='row'>
                                                 <div className='col-md-3'><strong>Mentor Email Address</strong></div>
-                                                <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{matchDetails.mentor_email}</span></div>
+                                                <div className='col-md-9'><strong>: </strong>
+                                                    <span style={{ marginLeft: '10px' }}>
+                                                        <a href={`mailto:${matchDetails.mentor_email}`}>{matchDetails.mentor_email}</a>
+                                                    </span>
+                                                </div>
                                             </div>
                                         </h4>
                                     </div>
                                     <hr />
-                                    <div align="center">
-                                        <Link to="/matching-page/feedback-form">
-                                            <button className='btn btn-success'>Submit Feedback</button>
-                                        </Link>
+                                    <div align='center'>
+                                        <br />
+                                        <Button variant="primary" className='col-md-4' onClick={handleFeedbackButtonClick}>Submit Feedback</Button> {/* Use the new handler */}
                                     </div></>
                                 )}
                             </div>
@@ -293,7 +343,7 @@ export default function MatchingPage() {
                     </Form.Group>
                     </div>
                     <div className='col-12 mt-3'>
-                        <table className="table table-bordered table-hover">
+                        <table className="table table-striped table-bordered table-hover">
                             <thead className='thead-dark'>
                                 <tr>
                                     <th style={{ textAlign: 'center' }}>No.</th>
@@ -312,9 +362,17 @@ export default function MatchingPage() {
                                 {filteredMatches.map((match, index) => (
                                     <tr key={match.matching_id}>
                                         <td style={{ textAlign: 'center' }}>{index + 1}</td>
-                                        <td style={{ textAlign: 'center' }}>{match.client_name}</td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            <span onClick={() => handleNameClick('Client', match.client_name, match.client_school, match.client_phone_no, match.client_email)} style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}>
+                                                {match.client_name}
+                                            </span>
+                                        </td>
                                         <td style={{ textAlign: 'center' }}>{match.client_matric_no}</td>
-                                        <td style={{ textAlign: 'center' }}>{match.mentor_name}</td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            <span onClick={() => handleNameClick('Mentor', match.mentor_name, match.mentor_school, match.mentor_phone_no, match.mentor_email)} style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}>
+                                                {match.mentor_name}
+                                            </span>
+                                        </td>
                                         <td style={{ textAlign: 'center' }}>{match.mentor_matric_no}</td>
                                         <td style={{ textAlign: 'center' }}>
                                             {/* <button className='btn btn-success btn-sm' 
@@ -441,6 +499,52 @@ export default function MatchingPage() {
                     </Button>
                 </Modal.Footer>
             </Modal>
+            <Modal show={showDetailsModal} onHide={handleDetailsModalClose} centered>
+    <Modal.Header closeButton>
+        <Modal.Title>{detailsModalTitle}</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+        <div className="matching-partner-details border border-dark rounded">
+            <h4>
+                <div className='row'>
+                    <div className='col-md-3'><strong>Name</strong></div>
+                    <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{detailsModalData.name}</span></div>
+                </div>
+            </h4>
+            <h4>
+                <div className='row'>
+                    <div className='col-md-3'><strong>School</strong></div>
+                    <div className='col-md-9'><strong>: </strong><span style={{ marginLeft: '10px' }}>{detailsModalData.school}</span></div>
+                </div>
+            </h4>
+            <h4>
+                <div className='row'>
+                    <div className='col-md-3'><strong>Phone No.</strong></div>
+                    <div className='col-md-9'><strong>: </strong>
+                        <span style={{ marginLeft: '10px' }}>
+                            <a href={`tel:${detailsModalData.phone}`}>{detailsModalData.phone}</a>
+                        </span>
+                    </div>
+                </div>
+            </h4>
+            <h4>
+                <div className='row'>
+                    <div className='col-md-3'><strong>Email Address</strong></div>
+                    <div className='col-md-9'><strong>: </strong>
+                        <span style={{ marginLeft: '10px' }}>
+                            <a href={`mailto:${detailsModalData.email}`}>{detailsModalData.email}</a>
+                        </span>
+                    </div>
+                </div>
+            </h4>
+        </div>
+    </Modal.Body>
+    <Modal.Footer>
+        <Button variant="secondary" onClick={handleDetailsModalClose}>
+            Close
+        </Button>
+    </Modal.Footer>
+</Modal>
         </div>
     );
 }

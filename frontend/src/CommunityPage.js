@@ -215,18 +215,22 @@ export default function CommunityPage() {
                                 </div>
                                 <hr />
                                 <div>
-                                    <h6>Replies:</h6>
-                                    {post.replies.length > 0 && (
-                                        <button className='btn btn-link btn-sm' onClick={() => toggleReplies(post.post_id)}>
-                                            {showReplies[post.post_id] ? 'Hide Replies' : 'View Replies'}
-                                        </button>
-                                    )}
+                                    <div className='d-flex'>
+                                        <div><h6>Replies:</h6></div>
+                                        <div>
+                                            {post.replies.length > 0 && (
+                                            <button className='btn btn-link btn-sm' onClick={() => toggleReplies(post.post_id)}>
+                                                {showReplies[post.post_id] ? 'Hide Replies' : 'View Replies'}
+                                            </button>
+                                            )} 
+                                        </div>
+                                    </div>
                                     {showReplies[post.post_id] && post.replies.map(reply => (
                                         <div key={reply.reply_id} className='card mb-2'>
                                             <div className='card-body'>
-                                                <div className='d-flex justify-content-between'>
+                                                <div>
                                                     <div><strong>{reply.reply_name}:</strong> {reply.reply_content}</div>
-                                                    <div>
+                                                    <div align='right'>
                                                         <small>{reply.reply_date}</small>
                                                         {(userType === 'admin' || (userType === 'student' && reply.user_id === userId)) && (
                                                             <button className="btn btn-outline-danger btn-sm ms-2" onClick={() => deleteReply(reply.reply_id)}>
