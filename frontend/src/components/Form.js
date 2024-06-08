@@ -31,7 +31,7 @@ function Form(props) {
                     <input type="text"
                         value={title}
                         className="form-control"
-                        placeholder="Please Enter Title"
+                        placeholder="Enter Title"
                         onChange={(e) => setTitle(e.target.value)}
                     />
 
@@ -40,7 +40,7 @@ function Form(props) {
                         rows="5"
                         value={body}
                         className="form-control"
-                        placeholder="Please Enter Description"
+                        placeholder="Enter Description"
                         onChange={(e) => setBody(e.target.value)}
                     />
                     <div align='center'>

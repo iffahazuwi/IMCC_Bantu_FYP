@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from './axios';
 
 const Register = (props) => {
@@ -20,12 +20,47 @@ const Register = (props) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+        if (
+            !email ||
+            !password ||
+            !name ||
+            !matric_no ||
+            !phone_no ||
+            school === "" ||
+            gender === "" ||
+            country === "" ||
+            language_1 === "" ||
+            language_2 === ""
+        ) {
+            alert("Please fill in all fields.");
+            return;
+        }
+
+        // Validate matric_no
+        if (!/^\d{6}$/.test(matric_no)) {
+            alert("Matric number must be exactly 6 digits.");
+            return;
+        }
+
+        // Validate phone_no
+        let formattedPhoneNo = phone_no;
+        if (!phone_no.startsWith("+")) {
+            formattedPhoneNo = "+" + phone_no;
+            setPhoneNumber(formattedPhoneNo);
+        }
+
+        // Validate email
+        if (!email.endsWith("@student.usm.my")) {
+            alert("Student must use USM email: '@student.usm.my'.");
+            return;
+        }
+
         const data = {
             email,
             password,
             name,
             matric_no,
-            phone_no,
+            phone_no: formattedPhoneNo,
             school,
             gender,
             country,
@@ -55,16 +90,37 @@ const Register = (props) => {
                 <form className="register-form">
 
                     <label className="mb-1" htmlFor="name">Full Name</label>
-                    <input className="mb-2"value={name} onChange={(e) => setName(e.target.value)} id="name" placeholder="Please enter your full name..." />
+                    <input className="mb-2"value={name} onChange={(e) => setName(e.target.value)} id="name" placeholder="Enter your full name" />
             
                     <label className="mb-1" htmlFor="matric_no">Matric Number</label>
-                    <input className="mb-2" value={matric_no} onChange={(e) => setMatricNumber(e.target.value)} id="matric_no" placeholder="Please enter your matric number..." />
+                    <input className="mb-2" value={matric_no} onChange={(e) => setMatricNumber(e.target.value)} id="matric_no" placeholder="Enter your matric number" />
             
                     <label className="mb-1" htmlFor="school">School</label>
-                    <input className="mb-2" value={school} onChange={(e) => setSchool(e.target.value)} id="school" placeholder="Please enter your school..." />
+                    <select
+                        className="form-select mb-2"
+                        value={school}
+                        onChange={(e) => setSchool(e.target.value)}
+                    >
+                        <option value="">Select your School</option>
+                        <option value="School of Management">School of Management</option>
+                        <option value="School of Business">School of Business</option>
+                        <option value="School of Arts">School of Arts</option>
+                        <option value="School of Social Sciences">School of Social Sciences</option>
+                        <option value="School of Physics">School of Physics</option>
+                        <option value="School of Biology">School of Biology</option>
+                        <option value="School of Literature">School of Literature</option>
+                        <option value="School of Medical Sciences">School of Medical Sciences</option>
+                        <option value="School of Communication">School of Communication</option>
+                        <option value="School of Engineering">School of Engineering</option>
+                        <option value="School of Educational Studies">School of Educational Studies</option>
+                        <option value="School of Computer Sciences">School of Computer Sciences</option>
+                        <option value="School of Mathematics">School of Mathematics</option>
+                        <option value="School of Chemistry">School of Chemistry</option>
+                        <option value="School of Pharmacy">School of Pharmacy</option>
+                    </select>
                     
                     <label className="mb-1" htmlFor="phone_no">Phone Number</label>
-                    <input className="mb-2"value={phone_no} onChange={(e) => setPhoneNumber(e.target.value)} id="phone_no" placeholder="Please enter your phone number..." />
+                    <input className="mb-2"value={phone_no} onChange={(e) => setPhoneNumber(e.target.value)} id="phone_no" placeholder="Enter your phone number" />
 
                     <label className="mb-1" htmlFor="gender">Gender</label>
                     <select
@@ -72,7 +128,7 @@ const Register = (props) => {
                     value={gender}
                     onChange={(e) => setGender(e.target.value)}
                     >
-                    <option value="">Please select your gender...</option>
+                    <option value="">Select your gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     </select>
@@ -83,7 +139,7 @@ const Register = (props) => {
                     value={country}
                     onChange={(e) => setCountry(e.target.value)}
                     >
-                    <option value="">Please select your origin country...</option>
+                    <option value="">Select your origin country</option>
                     <option value="Malaysia">Malaysia</option>
                     <option value="China">China</option>
                     <option value="Iran">Iran</option>
@@ -136,7 +192,7 @@ const Register = (props) => {
                     value={language_1}
                     onChange={(e) => setLanguage1(e.target.value)}
                 >
-                    <option value="">Please select your preferred language...</option>
+                    <option value="">Select your preferred language</option>
                     <option value="Mandarin">Mandarin</option>
                     <option value="Persian Farsi">Persian Farsi</option>
                     <option value="Arabic">Arabic</option>
@@ -173,7 +229,7 @@ const Register = (props) => {
                     value={language_2}
                     onChange={(e) => setLanguage2(e.target.value)}
                 >
-                    <option value="">Please select your second preffered language...</option>
+                    <option value="">Select your second preffered language</option>
                     <option value="Mandarin">Mandarin</option>
                     <option value="Persian Farsi">Persian Farsi</option>
                     <option value="Arabic">Arabic</option>
@@ -205,10 +261,10 @@ const Register = (props) => {
                 </select>
                     
                     <label className="mb-1" htmlFor="email">USM Student Email</label>
-                    <input className="mb-2" value={email} onChange={(e) => setEmail(e.target.value)} id="email" placeholder="Please enter your student email..." />
+                    <input className="mb-2" value={email} onChange={(e) => setEmail(e.target.value)} id="email" placeholder="Enter your student email" />
             
                     <label className="mb-1" htmlFor="password">Password</label>
-                    <input className="mb-2" value={password} onChange={(e) => setPassword(e.target.value)} type="password" id="password" placeholder="Please enter your password..." />
+                    <input className="mb-2" value={password} onChange={(e) => setPassword(e.target.value)} type="password" id="password" placeholder="Enter your password" />
 
                     <div align="center">
                         <button className="btn btn-success mt-3" onClick={(e) => handleSubmit(e)} >Register</button>

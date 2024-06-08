@@ -32,7 +32,7 @@ const MentorList = ({ refresh }) => {
                         <th>Gender</th>
                         <th>Country</th>
                         <th>Languages</th>
-                        <th>Accumulated Points</th>
+                        {/* <th>Accumulated Points</th> */}
                     </tr>
                 </thead>
                 <tbody>
@@ -42,12 +42,12 @@ const MentorList = ({ refresh }) => {
                             <td>{mentor.name}</td>
                             <td>{mentor.matric_no}</td>
                             <td>{mentor.school}</td>
-                            <td>{mentor.email}</td>
+                            <td><a href={`mailto:${mentor.email}`}>{mentor.email}</a></td>
                             <td>{mentor.phone_no}</td>
                             <td>{mentor.gender}</td>
                             <td>{mentor.country}</td>
                             <td>{mentor.language_1}, {mentor.language_2}</td>
-                            <td>{mentor.acc_points}</td>
+                            {/* <td>{mentor.acc_points}</td> */}
                         </tr>
                     ))}
                 </tbody>

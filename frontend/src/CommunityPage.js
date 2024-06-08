@@ -71,6 +71,11 @@ export default function CommunityPage() {
     };
 
     const handleSaveChanges = async (updatedPost) => {
+        // Validate title and description
+        if (!updatedPost.title || !updatedPost.description) {
+            alert("Title and description cannot be empty.");
+            return;
+        }
         try {
             console.log('Updating post:', updatedPost); // Check if the function is being called and the updatedPost is correct
 

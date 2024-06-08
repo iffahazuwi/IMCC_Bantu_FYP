@@ -36,7 +36,7 @@ const CreatePost = (props) => {
                 <input type="text"
                     value={post_title}
                     className="form-control"
-                    placeholder="Please enter title..."
+                    placeholder="Insert title"
                     onChange={(e) => setPostTitle(e.target.value)}
                 />
 
@@ -45,7 +45,7 @@ const CreatePost = (props) => {
                     rows="5"
                     value={post_desc}
                     className="form-control"
-                    placeholder="Please enter description..."
+                    placeholder="Insert description"
                     onChange={(e) => setPostDesc(e.target.value)}
                 />
             <div className="row">

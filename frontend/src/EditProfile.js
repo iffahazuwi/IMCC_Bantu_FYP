@@ -27,20 +27,20 @@ const EditProfile = ({ userData, onSave, onCancel }) => {
         <form onSubmit={handleSubmit}>
             <h2>Edit Profile</h2>
             <div className='col'>
-            <label className='row'>
+            {/* <label className='row'>
                 Name:
                 <input type="text" name="name" value={formData.name} onChange={handleChange} />
-            </label>
+            </label> */}
             {formData.matric_no && (
                 <>
-                    <label className='row'>
+                    {/* <label className='row'>
                         Matric Number:
                         <input type="text" name="matric_no" value={formData.matric_no} onChange={handleChange} />
                     </label>
                     <label className='row'>
                         School:
                         <input type="text" name="school" value={formData.school} onChange={handleChange} />
-                    </label>
+                    </label> */}
                     <label className='row'>
                         Gender:
                         <select
@@ -189,10 +189,10 @@ const EditProfile = ({ userData, onSave, onCancel }) => {
                 Phone Number:
                 <input type="text" name="phone_no" value={formData.phone_no} onChange={handleChange} />
             </label>
-            <label className='row'>
+            {/* <label className='row'>
                 Email:
                 <input type="email" name="email" value={formData.email} onChange={handleChange} />
-            </label>
+            </label> */}
             </div>
             <div className='row mt-3'>
                 <div className='col'><button type="button" className='btn btn-secondary' onClick={onCancel}>Cancel</button></div>

@@ -37,10 +37,10 @@ const Login = (props) => {
                 <form className="login-form" onSubmit={handleSubmit}>
             
                     <label className="mb-1" htmlFor="email">USM Email</label>
-                    <input  className="mb-2" value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Please enter your USM email..." id="email" name="email" />
+                    <input  className="mb-2" value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Enter your USM email" id="email" name="email" />
             
                     <label className="mb-1" htmlFor="password">Password</label>
-                    <input className="mb-2" value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Please enter your password..." id="password" name="password" />
+                    <input className="mb-2" value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Enter your password" id="password" name="password" />
 
                     <div align="center">
                         <button className="btn btn-success mt-3" onClick={(e) => handleSubmit(e)}>Login</button>
