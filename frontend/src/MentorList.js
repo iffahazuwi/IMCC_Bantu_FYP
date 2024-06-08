@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from './axios';
-import { Table } from 'react-bootstrap';
+import { Table, Button, ButtonGroup } from 'react-bootstrap';
 
 const MentorList = ({ refresh }) => {
     const [mentors, setMentors] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const mentorsPerPage = 5;
 
     useEffect(() => {
         const fetchMentors = async () => {
@@ -17,9 +19,34 @@ const MentorList = ({ refresh }) => {
         fetchMentors();
     }, [refresh]); // Re-fetch mentors when 'refresh' changes
 
+    // Calculate the indices of the first and last mentors on the current page
+    const indexOfLastMentor = currentPage * mentorsPerPage;
+    const indexOfFirstMentor = indexOfLastMentor - mentorsPerPage;
+    const currentMentors = mentors.slice(indexOfFirstMentor, indexOfLastMentor);
+
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(mentors.length / mentorsPerPage);
+
     return (
         <div>
             <h2 className='my-4'>Mentor List</h2>
+            <ButtonGroup className="mb-3">
+                <Button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>
+                    Previous
+                </Button>
+                {Array.from({ length: totalPages }, (_, index) => (
+                    <Button
+                        key={index + 1}
+                        variant={currentPage === index + 1 ? 'primary' : 'outline-primary'}
+                        onClick={() => setCurrentPage(index + 1)}
+                    >
+                        {index + 1}
+                    </Button>
+                ))}
+                <Button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>
+                    Next
+                </Button>
+            </ButtonGroup>
             <Table striped bordered hover>
                 <thead>
                     <tr>
@@ -36,9 +63,9 @@ const MentorList = ({ refresh }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {mentors.map((mentor, index) => (
+                    {currentMentors.map((mentor, index) => (
                         <tr key={mentor.id}>
-                            <td>{index + 1}</td>
+                            <td>{indexOfFirstMentor + index + 1}</td>
                             <td>{mentor.name}</td>
                             <td>{mentor.matric_no}</td>
                             <td>{mentor.school}</td>

@@ -726,19 +726,19 @@ def insert_match():
         db.session.commit()
 
         # Fetch mentor details
-        mentor_details = db.session.query(Student).filter(Student.id == mentor_id).first()
-        client_details = db.session.query(Student).filter(Student.id == client_id).first()
+        # mentor_details = db.session.query(Student).filter(Student.id == mentor_id).first()
+        # client_details = db.session.query(Student).filter(Student.id == client_id).first()
 
-        if mentor_details and client_details:
-            mentor_info = {
-                'name': mentor_details.name,
-                'school': mentor_details.school,
-                'phone': mentor_details.phone_no,
-                'email': mentor_details.email
-            }
+        # if mentor_details and client_details:
+        #     mentor_info = {
+        #         'name': mentor_details.name,
+        #         'school': mentor_details.school,
+        #         'phone': mentor_details.phone_no,
+        #         'email': mentor_details.email
+        #     }
 
-            # Send email to the client
-            send_match_email(client_details.email, mentor_info)
+        #     # Send email to the client
+        #     send_match_email(client_details.email, mentor_info)
 
         return 'New match has been created successfully!', 201
     except Exception as e:

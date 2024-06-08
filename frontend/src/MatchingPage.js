@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useEffect, useState } from 'react';
+import { Button, Form, Modal } from 'react-bootstrap';
 import { Link, useNavigate } from "react-router-dom";
 import axios from './axios';
-import { Modal, Button, Form } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 export default function MatchingPage() {
 
@@ -21,6 +21,41 @@ export default function MatchingPage() {
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [detailsModalTitle, setDetailsModalTitle] = useState('');
     const [detailsModalData, setDetailsModalData] = useState({});
+
+    const [currentPage, setCurrentPage] = useState(0);
+    //const [matches, setMatches] = useState([]);
+    const itemsPerPage = 10;
+
+    // Get current page matches
+    // const filteredMatches = matches.filter((match) => {
+    //     if (statusFilter === 'All') {
+    //         return true; // Show all matches
+    //     } else {
+    //         return match.matching_status === statusFilter;
+    //     }
+    // });
+
+    // Function to handle page change
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    // Render pagination buttons
+    const renderPaginationButtons = () => {
+        const buttons = [];
+        for (let i = 0; i < totalPages; i++) {
+            buttons.push(
+                <button
+                    key={i}
+                    className={`btn ${i === currentPage ? 'btn-primary' : 'btn-secondary'}`}
+                    onClick={() => handlePageChange(i)}
+                >
+                    {i + 1}
+                </button>
+            );
+        }
+        return buttons;
+    };
 
     const navigate = useNavigate();
 
@@ -206,7 +241,14 @@ export default function MatchingPage() {
     };
     
     const handleDetailsModalClose = () => setShowDetailsModal(false);
-    
+
+     // Calculate total pages
+    // Calculate total pages based on filtered matches
+    const totalPages = Math.ceil(filteredMatches.length / itemsPerPage);
+
+    // Get current page matches
+    const currentMatches = filteredMatches.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
+
 
     return (
         <div className="App">
@@ -342,6 +384,9 @@ export default function MatchingPage() {
                         </Form.Control>
                     </Form.Group>
                     </div>
+                    <div className="mt-3">
+                        {renderPaginationButtons()}
+                    </div>
                     <div className='col-12 mt-3'>
                         <table className="table table-striped table-bordered table-hover">
                             <thead className='thead-dark'>
@@ -358,8 +403,7 @@ export default function MatchingPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {/* {matches.map((match, index) => ( */}
-                                {filteredMatches.map((match, index) => (
+                                {currentMatches.map((match, index) => (
                                     <tr key={match.matching_id}>
                                         <td style={{ textAlign: 'center' }}>{index + 1}</td>
                                         <td style={{ textAlign: 'center' }}>
@@ -375,33 +419,18 @@ export default function MatchingPage() {
                                         </td>
                                         <td style={{ textAlign: 'center' }}>{match.mentor_matric_no}</td>
                                         <td style={{ textAlign: 'center' }}>
-                                            {/* <button className='btn btn-success btn-sm' 
-                                            onClick={() => viewFile(match.matching_id)}>View</button> */}
                                             <button
                                             className={`btn btn-sm ${getButtonColor(match.overall_rating)}`}
                                             onClick={() => viewFile(match.matching_id)}>View</button>
                                         </td>
                                         <td style={{ textAlign: 'center' }}>
-                                            {/* <select value={match.matching_status} onChange={(e) => updateStatus(match.matching_id, e.target.value)}>
-                                            <option value="Active">Active</option>
-                                            <option value="Completed">Completed</option>
-                                            </select> */}
                                             <Form.Control as="select" value={match.matching_status} onChange={(e) => updateStatus(match.matching_id, e.target.value)}>
                                                 <option value="Active">Active</option>
                                                 <option value="Completed">Completed</option>
                                             </Form.Control>
                                         </td>
-                                        {/* <td style={{ textAlign: 'center' }}>
-                                            {match.evaluation === 'Good' || match.evaluation === 'Neutral' || match.evaluation === 'Bad' ? (
-                                                match.evaluation
-                                            ) : (
-                                                <button className='btn btn-primary btn-sm' 
-                                                onClick={() => editEvaluation(match)}>Update</button>
-                                            )}
-                                        </td> */}
                                         <td style={{ textAlign: 'center' }}>
-                                            <button className='btn btn-danger btn-sm'
-                                            onClick={() => deleteMatch(match.matching_id)}>
+                                            <button className='btn btn-danger btn-sm' onClick={() => deleteMatch(match.matching_id)}>
                                                 <FontAwesomeIcon icon={faTrash} />
                                             </button>
                                         </td>
