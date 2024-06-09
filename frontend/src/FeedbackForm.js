@@ -53,7 +53,7 @@ const FeedbackForm = (props) => {
         <div className="App">
             <div className="feedback-form-container">
                 <h1 className="mb-2" align="left">Feedback Form</h1>
-                <h6 className="mb-4">**1 = Strongly Disagree, 5 = Strongly Agree</h6>
+                <h6 className="mb-4">**1 = Strongly Disagree, 5 = Strongly Agree</h6><hr/>
                 <div className="rating-container">
                     <div className="row">
                         <div className="col"><label>1. My mentor is accessible and available most of the time.</label></div>
@@ -145,10 +145,10 @@ const FeedbackForm = (props) => {
                         ))}
                         </div>
                         </div>
-                    </div><br/>
+                    </div><br/><hr/>
                     <div className="row">
-                        <div className="col"><label><strong>OVERALL RATING: </strong></label></div>
-                        <div className="col">
+                        <div className="col mt-2"><label><strong>OVERALL RATING: </strong></label></div>
+                        <div className="col mt-2">
                         <div>
                         {[1, 2, 3, 4, 5].map((value) => (
                             <label key={value} style={{ marginRight: '10px' }}> {/* Add margin-right */}
@@ -158,9 +158,9 @@ const FeedbackForm = (props) => {
                         ))}
                         </div>
                         </div>
-                    </div><br/>
+                    </div>
                 </div>
-                <label htmlFor="feedback_desc" className="form-label mt-2">Comments:</label>
+                <label htmlFor="feedback_desc" className="form-label mt-3">Comments:</label>
                 <textarea
                     rows="5"
                     value={feedback_desc}

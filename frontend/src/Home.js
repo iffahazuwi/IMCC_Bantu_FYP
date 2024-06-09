@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from './axios';
-import { Pie } from 'react-chartjs-2';
+import { Pie, Bar, Line } from 'react-chartjs-2';
 import 'chart.js/auto';
 import './App.css';
 
@@ -11,6 +11,8 @@ export default function Home() {
     const [totalMatches, setTotalMatches] = useState(0);
     const [averageRating, setAverageRating] = useState(0.0);
     const [matchStatusDistribution, setMatchStatusDistribution] = useState([]);
+    // const [mentorRatingsDistribution, setMentorRatingsDistribution] = useState([]);
+    // const [matchesOverTime, setMatchesOverTime] = useState([]);
 
     useEffect(() => {
         const fetchUserRole = async () => {
@@ -51,10 +53,30 @@ export default function Home() {
             }
         };
 
+        // const fetchMentorRatingsDistribution = async () => {
+        //     try {
+        //         const response = await axios.get('http://localhost:5000/getMentorRatingsDistribution', { withCredentials: true });
+        //         setMentorRatingsDistribution(response.data);
+        //     } catch (error) {
+        //         console.error('Error fetching mentor ratings distribution:', error);
+        //     }
+        // };
+
+        // const fetchMatchesOverTime = async () => {
+        //     try {
+        //         const response = await axios.get('http://localhost:5000/getMatchesOverTime', { withCredentials: true });
+        //         setMatchesOverTime(response.data);
+        //     } catch (error) {
+        //         console.error('Error fetching matches over time:', error);
+        //     }
+        // };
+
         fetchUserRole();
         fetchMentorCount();
         fetchMatchingStats();
         fetchMatchStatusDistribution();
+        // fetchMentorRatingsDistribution();
+        // fetchMatchesOverTime();
     }, []);
 
     const matchStatusData = {
@@ -71,6 +93,29 @@ export default function Home() {
             }
         ]
     };
+
+    // const mentorRatingsData = {
+    //     labels: mentorRatingsDistribution.map(item => item.rating),
+    //     datasets: [
+    //         {
+    //             label: 'Number of Mentors',
+    //             data: mentorRatingsDistribution.map(item => item.count),
+    //             backgroundColor: '#36A2EB'
+    //         }
+    //     ]
+    // };
+
+    // const matchesOverTimeData = {
+    //     labels: matchesOverTime.map(item => item.date),
+    //     datasets: [
+    //         {
+    //             label: 'Number of Matches',
+    //             data: matchesOverTime.map(item => item.count),
+    //             fill: false,
+    //             borderColor: '#FF6384'
+    //         }
+    //     ]
+    // };
 
     return (
         <div className="app-home">
@@ -124,6 +169,16 @@ export default function Home() {
                     <Pie data={matchStatusData} />
                 </div>
             </div>
+            {/* <div className='down-side'>
+            <h3 align='center'>Mentor Ratings Distribution</h3>
+                <div className="chart-container">
+                    <Bar data={mentorRatingsData} />
+                </div>
+                <h3 align='center'>Matches Over Time</h3>
+                <div className="chart-container">
+                    <Line data={matchesOverTimeData} />
+                </div>
+            </div> */}
         </div>
     );
 }

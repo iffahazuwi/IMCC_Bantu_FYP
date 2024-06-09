@@ -7,7 +7,7 @@ from flask_mail import Mail, Message
 from sqlalchemy import func
 from sqlalchemy.orm import aliased
 from functools import wraps
-from models import Matching, Reply, Student, db, User, Feedback, Application, Post, Notification, Admin, Bookmark
+from models import Form, Matching, Reply, Student, db, User, Feedback, Application, Post, Notification, Admin, Bookmark
 from config import ApplicationConfig
 from werkzeug.utils import secure_filename
 from flask_session import Session
@@ -338,38 +338,71 @@ def submit_application():
     else:
         return jsonify({"error": "No file selected!"}), 400
     
+# @app.route('/get-applications', methods=['GET'])
+# @login_required
+# @admin_required
+# def get_applications():
+#     try:
+#         applications = Application.query.all()
+#         if not applications:
+#             return jsonify({"error": "No applications found"}), 404
+        
+#         applications_list = [
+#             {
+#                 'app_id': app.app_id,
+#                 "app_gender": app.app_gender,
+#                 "app_country": app.app_country,
+#                 "app_language": app.app_language,
+#                 "app_language_2": app.app_language_2,
+#                 "app_skill": app.app_skill,
+#                 "app_filename": app.app_filename,
+#                 'app_filedata': base64.b64encode(app.app_filedata).decode('utf-8'),
+#                 'user_name': app.user.name,
+#                 'matric_no': app.user.matric_no,
+#                 'school': app.user.school,
+#                 'phone_no': app.user.phone_no,
+#                 'email': app.user.email,
+#                 'app_date': app.app_date.strftime('%Y-%m-%d'),
+#                 "app_status": app.app_status
+#             }
+#             for app in applications
+#         ]
+#         return jsonify(applications_list)
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
+
 @app.route('/get-applications', methods=['GET'])
 @login_required
 @admin_required
 def get_applications():
     try:
-        applications = Application.query.all()
+        # Fetch applications and order by form_date in ascending order
+        applications = Form.query.order_by(Form.form_date.asc()).all()
         if not applications:
             return jsonify({"error": "No applications found"}), 404
         
         applications_list = [
             {
-                'app_id': app.app_id,
-                "app_gender": app.app_gender,
-                "app_country": app.app_country,
-                "app_language": app.app_language,
-                "app_language_2": app.app_language_2,
-                "app_skill": app.app_skill,
-                "app_filename": app.app_filename,
-                'app_filedata': base64.b64encode(app.app_filedata).decode('utf-8'),
-                'user_name': app.user.name,
-                'matric_no': app.user.matric_no,
-                'school': app.user.school,
-                'phone_no': app.user.phone_no,
-                'email': app.user.email,
-                'app_date': app.app_date.strftime('%Y-%m-%d'),
-                "app_status": app.app_status
+                'form_id': app.form_id,
+                'form_name': app.form_name,
+                'form_ic': app.form_ic,
+                'form_matric_no': app.form_matric_no,
+                'form_programme': app.form_programme,
+                'form_school': app.form_school,
+                'form_country': app.form_country,
+                'form_languages': app.form_languages,
+                'form_phone_no': app.form_phone_no,
+                'form_email': app.form_email,
+                'form_allergies': app.form_allergies,
+                'form_date': app.form_date,
+                'form_status': app.form_status
             }
             for app in applications
         ]
         return jsonify(applications_list)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
     
 @app.route('/uploads/<filename>', methods=['GET'])
 def get_file(filename):
@@ -382,22 +415,34 @@ def get_file(filename):
 @app.route('/update-application-status', methods=['POST'])
 def update_application_status():
     data = request.json
-    app_id = data.get('app_id')
+    form_id = data.get('form_id')
     new_status = data.get('status')
 
-    application = Application.query.filter_by(app_id=app_id).first()
+    application = Form.query.filter_by(form_id=form_id).first()
     if not application:
         return jsonify({'error': 'Application not found'}), 404
 
-    application.app_status = new_status
+    application.form_status = new_status
 
-    if new_status == 'Approved':
-        student = Student.query.filter_by(id=application.id).first()
-        if student:
-            student.is_mentor = True
+    # if new_status == 'Approved':
+    #     student = Student.query.filter_by(id=application.id).first()
+    #     if student:
+    #         student.is_mentor = True
 
     db.session.commit()
+    # send_email_notification(application.form_email, new_status)
+
     return jsonify({'success': 'Status updated successfully'})
+
+def send_email_notification(student_email, new_status):
+    subject = "Mentor Application Status Update"
+    if new_status == 'Approved':
+        body = "Congratulations! Your mentor application has been approved."
+    else:
+        body = "We regret to inform you that your mentor application has been rejected."
+
+    msg = Message(subject, recipients=[student_email], body=body)
+    mail.send(msg)
 
 @app.route('/update-evaluation', methods=['POST'])
 def update_evaluation():
@@ -993,6 +1038,25 @@ def get_student_matching_id():
             matching = Matching.query.filter_by(mentor_id=current_user.id).first()
             matching_id = matching.matching_id
             return jsonify({"matching_id": matching_id}), 200
+
+@app.route('/submit-form', methods=['POST'])
+def submit_form():
+    data = request.get_json()
+    new_form = Form(
+        form_name=data.get('form_name'),
+        form_ic=data.get('form_ic'),
+        form_matric_no=data.get('form_matric_no'),
+        form_programme=data.get('form_programme'),
+        form_school=data.get('form_school'),
+        form_country=data.get('form_country'),
+        form_languages=data.get('form_languages'),
+        form_phone_no=data.get('form_phone_no'),
+        form_email=data.get('form_email'),
+        form_allergies=data.get('form_allergies')
+    )
+    db.session.add(new_form)
+    db.session.commit()
+    return jsonify({'message': 'Form submitted successfully'}), 201
 
 if __name__ == "__main__":
     # db.create_all()

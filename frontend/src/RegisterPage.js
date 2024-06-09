@@ -83,17 +83,17 @@ const Register = (props) => {
     };
 
     return (
-        <div className="App">
+        <div className="App-login">
             <div className="auth-form-container">
             <h1 className="mt-2" align="center" >Mentor Registration</h1>
             <div className="p-3">
-                <form className="register-form">
+                <form className="login-form">
 
                     <label className="mb-1" htmlFor="name">Full Name</label>
-                    <input className="mb-2"value={name} onChange={(e) => setName(e.target.value)} id="name" placeholder="Enter your full name" />
+                    <input className="mb-2 form-control"value={name} onChange={(e) => setName(e.target.value)} id="name" placeholder="Enter your full name" />
             
                     <label className="mb-1" htmlFor="matric_no">Matric Number</label>
-                    <input className="mb-2" value={matric_no} onChange={(e) => setMatricNumber(e.target.value)} id="matric_no" placeholder="Enter your matric number" />
+                    <input className="mb-2 form-control" value={matric_no} onChange={(e) => setMatricNumber(e.target.value)} id="matric_no" placeholder="Enter your matric number" />
             
                     <label className="mb-1" htmlFor="school">School</label>
                     <select
@@ -120,7 +120,7 @@ const Register = (props) => {
                     </select>
                     
                     <label className="mb-1" htmlFor="phone_no">Phone Number</label>
-                    <input className="mb-2"value={phone_no} onChange={(e) => setPhoneNumber(e.target.value)} id="phone_no" placeholder="Enter your phone number" />
+                    <input className="mb-2 form-control"value={phone_no} onChange={(e) => setPhoneNumber(e.target.value)} id="phone_no" placeholder="Enter your phone number" />
 
                     <label className="mb-1" htmlFor="gender">Gender</label>
                     <select
@@ -261,10 +261,10 @@ const Register = (props) => {
                 </select>
                     
                     <label className="mb-1" htmlFor="email">USM Student Email</label>
-                    <input className="mb-2" value={email} onChange={(e) => setEmail(e.target.value)} id="email" placeholder="Enter your student email" />
+                    <input className="mb-2 form-control" value={email} onChange={(e) => setEmail(e.target.value)} id="email" placeholder="Enter your student email" />
             
                     <label className="mb-1" htmlFor="password">Password</label>
-                    <input className="mb-2" value={password} onChange={(e) => setPassword(e.target.value)} type="password" id="password" placeholder="Enter your password" />
+                    <input className="mb-2 form-control" value={password} onChange={(e) => setPassword(e.target.value)} type="password" id="password" placeholder="Enter your password" />
 
                     <div align="center">
                         <button className="btn btn-success mt-3" onClick={(e) => handleSubmit(e)} >Register</button>

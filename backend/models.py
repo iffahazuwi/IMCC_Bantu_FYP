@@ -162,3 +162,19 @@ class Reply(db.Model):
 
     user = db.relationship('Student', backref=db.backref('replies', lazy=True))
     post = db.relationship('Post', backref=db.backref('replies', lazy=True, cascade='all, delete'))
+    
+class Form(db.Model):
+    __tablename__ = "forms"
+    form_id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
+    form_name = db.Column(db.String(345), nullable=True)
+    form_ic = db.Column(db.String(345), nullable=True)
+    form_matric_no = db.Column(db.String(32), nullable=True)
+    form_programme = db.Column(db.String(345), nullable=True)
+    form_school = db.Column(db.String(345), nullable=True)
+    form_country = db.Column(db.String(345), nullable=True)
+    form_languages = db.Column(db.String(345), nullable=True)
+    form_phone_no = db.Column(db.String(32), nullable=True)
+    form_email = db.Column(db.String(345), nullable=True)
+    form_allergies = db.Column(db.String(345), nullable=True)
+    form_date = db.Column(db.DateTime, default=datetime.now)
+    form_status = db.Column(db.String(345), nullable=True)

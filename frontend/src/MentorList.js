@@ -29,7 +29,7 @@ const MentorList = ({ refresh }) => {
 
     return (
         <div>
-            <h2 className='my-4'>Mentor List</h2>
+            <h2 className='my-4'>List of Registered Mentors</h2>
             <ButtonGroup className="mb-3">
                 <Button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>
                     Previous

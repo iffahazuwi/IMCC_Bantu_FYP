@@ -65,17 +65,17 @@ const UserPage = () => {
             <div>
                 <div className='row'>
                     {userType === 'student' ? (<div className="mb-4 col" align='left'>
-                        {userData && !userData.is_mentor && (
+                        {/* {userData && !userData.is_mentor && (
                             <Link to="/user-page/application-form">
                             <button
                                 className='btn btn-link'
                             >Mentor Application Form</button>
                             </Link>
-                        )}
+                        )} */}
                     </div>) : (<div className="mb-4 row" align='left'>
                         <div className='col'>
                         <Link to="/user-page/mentor-management">
-                            <button className='btn btn-link'>Mentor Management</button>
+                            <button className='btn btn-primary'>Mentor Management</button>
                         </Link>
                         </div>
                     </div>)}

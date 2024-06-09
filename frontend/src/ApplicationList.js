@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import axios from './axios';
-import { Modal, Button, Form, Table } from 'react-bootstrap';
+import { Modal, Button, Form, Table, ButtonGroup } from 'react-bootstrap';
 
 export default function ApplicationList() {
 
@@ -10,6 +10,8 @@ export default function ApplicationList() {
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedApplication, setSelectedApplication] = useState({});
     const [newStatus, setNewStatus] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const mentorsPerPage = 5;
 
     useEffect(() => {
         fetchApplications();
@@ -42,7 +44,7 @@ export default function ApplicationList() {
         }
         try {
             await axios.post('http://localhost:5000/update-application-status', {
-                app_id: selectedApplication.app_id,
+                form_id: selectedApplication.form_id,
                 status: newStatus
             }, { withCredentials: true });
             alert("Status updated successfully!")
@@ -55,41 +57,62 @@ export default function ApplicationList() {
 
     const editStatus = (application) => {
         setSelectedApplication(application);
-        setNewStatus(application.app_status || '');
+        setNewStatus(application.form_status || '');
         setShowEditModal(true);
     };
+    
+    // Calculate the indices of the first and last mentors on the current page
+    const indexOfLastApplication = currentPage * mentorsPerPage;
+    const indexOfFirstApplication = indexOfLastApplication - mentorsPerPage;
+    const currentApplications = applications.slice(indexOfFirstApplication, indexOfLastApplication);
+
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(applications.length / mentorsPerPage);
 
     return (
         <div>
             <h2 className="my-4">Mentor Application List</h2>
+            <ButtonGroup className="mb-3">
+                <Button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>
+                    Previous
+                </Button>
+                {Array.from({ length: totalPages }, (_, index) => (
+                    <Button
+                        key={index + 1}
+                        variant={currentPage === index + 1 ? 'primary' : 'outline-primary'}
+                        onClick={() => setCurrentPage(index + 1)}
+                    >
+                        {index + 1}
+                    </Button>
+                ))}
+                <Button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>
+                    Next
+                </Button>
+            </ButtonGroup>
             <Table striped bordered hover>
                 <thead>
                     <tr>
                         <th>No.</th>
                         <th>Name</th>
                         <th>Matric No.</th>
-                        <th>School</th>
-                        <th>Phone No.</th>
                         <th>Email</th>
                         <th>Form</th>
                         <th>Status</th>
                     </tr>
                     </thead>
                 <tbody>
-                    {applications.map((app, index) => (
-                        <tr key={app.app_id}>
-                            <td>{index + 1}</td>
-                            <td>{app.user_name}</td>
-                            <td>{app.matric_no}</td>
-                            <td>{app.school}</td>
-                            <td>{app.phone_no}</td>
-                            <td>{app.email}</td>
+                    {currentApplications.map((app, index) => (
+                        <tr key={app.form_id}>
+                            <td>{indexOfFirstApplication + index + 1}</td>
+                            <td>{app.form_name}</td>
+                            <td>{app.form_matric_no}</td>
+                            <td><a href={`mailto:${app.form_email}`}>{app.form_email}</a></td>
                             <td>
-                                <button className='btn btn-success btn-sm' onClick={() => viewFile(app)}>View File</button>
+                                <button className='btn btn-success btn-sm' onClick={() => viewFile(app)}>View</button>
                             </td>
                             <td>
-                                {app.app_status === 'Approved' || app.app_status === 'Rejected' ? (
-                                    app.app_status
+                                {app.form_status === 'Approved' || app.form_status === 'Rejected' ? (
+                                    app.form_status
                                 ) : (
                                     <button className='btn btn-primary btn-sm' onClick={() => editStatus(app)}>Update</button>
                                 )}
@@ -108,12 +131,23 @@ export default function ApplicationList() {
                     <Modal.Title>Application Details</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p><strong>Gender:</strong> {selectedApplication.app_gender}</p>
+                    {/* <p><strong>Gender:</strong> {selectedApplication.app_gender}</p>
                     <p><strong>Country:</strong> {selectedApplication.app_country}</p>
                     <p><strong>Language:</strong> {selectedApplication.app_language}, {selectedApplication.app_language_2}</p>
                     <p><strong>Skill:</strong> {selectedApplication.app_skill}</p>
                     <p><strong>Certificate:</strong> <a href={`http://localhost:5000/uploads/${selectedApplication.app_filedata}`} target="_blank" rel="noopener noreferrer">{selectedApplication.app_filename}</a></p>
-                    <p><strong>Date:</strong> {selectedApplication.app_date}</p>
+                    <p><strong>Date:</strong> {selectedApplication.app_date}</p> */}
+                    <p><strong>Name:</strong> {selectedApplication.form_name}</p>
+                    <p><strong>IC/Passport No.:</strong> {selectedApplication.form_ic}</p>
+                    <p><strong>Matric No.:</strong> {selectedApplication.form_matric_no}</p>
+                    <p><strong>Programme:</strong> {selectedApplication.form_programme}</p>
+                    <p><strong>School:</strong> {selectedApplication.form_school}</p>
+                    <p><strong>Country:</strong> {selectedApplication.form_country}</p>
+                    <p><strong>Languages:</strong> {selectedApplication.form_languages}</p>
+                    <p><strong>Phone No.:</strong> {selectedApplication.form_phone_no}</p>
+                    <p><strong>Email:</strong> {selectedApplication.form_email}</p>
+                    <p><strong>Allergies:</strong> {selectedApplication.form_allergies}</p>
+                    <p><strong>Date Submitted:</strong> {selectedApplication.form_date}</p>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>Close</Button>

@@ -187,7 +187,7 @@ const EditProfile = ({ userData, onSave, onCancel }) => {
             )}
             <label className='row'>
                 Phone Number:
-                <input type="text" name="phone_no" value={formData.phone_no} onChange={handleChange} />
+                <input className='form-control' type="text" name="phone_no" value={formData.phone_no} onChange={handleChange} />
             </label>
             {/* <label className='row'>
                 Email:

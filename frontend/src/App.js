@@ -19,6 +19,7 @@ import RequestForm from "./RequestForm";
 import SubmitMentorFeedback from "./SubmitMentorFeedback";
 import EditPost from "./EditPost";
 import MentorManagement from "./MentorManagement";
+import ApplyForm from "./ApplyForm";
 
 const App = () => {
 
@@ -46,6 +47,7 @@ const App = () => {
                     <Route path="/community-page/edit-post/:postId" element={<EditPost />} />
                     <Route path="/user-page/application-list" component={ApplicationList} />
                     <Route path="/user-page/mentor-management" component={MentorManagement} />
+                    <Route path="/apply-form" element={<ApplyForm />} />
                 </Routes>
             </BrowserRouter>
         </>
