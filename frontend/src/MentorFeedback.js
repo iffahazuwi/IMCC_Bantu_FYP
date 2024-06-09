@@ -1,7 +1,7 @@
 import React, { useState, useEffect  } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from './axios';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, ButtonGroup } from 'react-bootstrap';
 
 const MentorFeedback = (props) => {
 
@@ -11,6 +11,8 @@ const MentorFeedback = (props) => {
     const [feedback, setFeedback] = useState({});
     const [modalTitle, setModalTitle] = useState('');
     const [matchingId, setMatchingId] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const clientsPerPage = 10;
 
     useEffect(() => {
         fetchData();
@@ -86,11 +88,38 @@ const MentorFeedback = (props) => {
         }
     };
 
+    // Calculate the indices of the first and last mentors on the current page
+    const indexOfLastClient = currentPage * clientsPerPage;
+    const indexOfFirstClient = indexOfLastClient - clientsPerPage;
+    const currentClients = mentorMatches.slice(indexOfFirstClient, indexOfLastClient);
+
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(mentorMatches.length / clientsPerPage);
+
     return (
         <div className="App">
             <div className="feedback-form-container">
             <div className='row'>
             <div><h2 className="mb-2" align="left">Matching History List</h2></div>
+            <div>
+            <ButtonGroup className="mt-3">
+                <Button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>
+                    Previous
+                </Button>
+                {Array.from({ length: totalPages }, (_, index) => (
+                    <Button
+                        key={index + 1}
+                        variant={currentPage === index + 1 ? 'primary' : 'outline-primary'}
+                        onClick={() => setCurrentPage(index + 1)}
+                    >
+                        {index + 1}
+                    </Button>
+                ))}
+                <Button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>
+                    Next
+                </Button>
+            </ButtonGroup>
+            </div>
             <div className='col-12 mt-3'>
                 <table className="table table-bordered border-dark">
                     <thead>
@@ -104,7 +133,7 @@ const MentorFeedback = (props) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {mentorMatches.map((match, index) => (
+                        {currentClients.map((match, index) => (
                             <tr key={match.matching_id}>
                                 <td style={{ textAlign: 'center' }}>{index + 1}</td>
                                 <td style={{ textAlign: 'center' }}>{match.client_name}</td>

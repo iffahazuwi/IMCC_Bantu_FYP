@@ -165,7 +165,7 @@ const FeedbackForm = (props) => {
                     rows="5"
                     value={feedback_desc}
                     className="form-control"
-                    placeholder="Please leave your comments here..."
+                    placeholder="Please leave your comments here"
                     onChange={(e) => setFeedbackDesc(e.target.value)}
                 />
                 <div className="row">

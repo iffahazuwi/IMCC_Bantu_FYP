@@ -96,7 +96,7 @@ export default function ApplicationList() {
                         <th>Name</th>
                         <th>Matric No.</th>
                         <th>Email</th>
-                        <th>Form</th>
+                        <th>Details</th>
                         <th>Status</th>
                     </tr>
                     </thead>
